@@ -1,0 +1,8 @@
+1. Linked lists?
+head_str
+free_space_remaining
+next
+
+* track head of the list
+2. use a stack?
+stop when head == stack
