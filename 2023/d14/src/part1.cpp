@@ -24,9 +24,11 @@ Dimensions getFileDimensions(ifstream& file) {
     while (getline(file, buffer)) {
         _rows += 1;
     }
-    cout << _rows << ' ' << _cols << '\n';
+    dim.rows = _rows;
+    dim.cols = _cols;
     return dim;
 }
+
 int main(int argc, char* argv[]) {
     cout << "Hello world: ";
     if (argc < 2) {
@@ -37,7 +39,8 @@ int main(int argc, char* argv[]) {
     ifstream infile;
     infile.open(inputpath);
     
-    getFileDimensions(infile);
+    Dimensions dim = getFileDimensions(infile);
+    cout << "returned: " << dim.cols << ' ' << dim.rows << '\n';
     infile.close();
     return 0;
 }
