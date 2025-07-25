@@ -57,7 +57,9 @@ int main(int argc, char* argv[]) {
     
     
     CharMatrix* matrix = readMatrixFromFile(infile);
-    matrix->printMatrix();
+    for (int i = matrix->getRows() - 1; i >= 0; --i) {
+        cout << (*matrix)(i,0) << '\n';
+    }
     infile.close();
     return 0;
 }
