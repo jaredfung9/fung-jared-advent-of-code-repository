@@ -26,8 +26,10 @@ Dimensions getFileDimensions(ifstream& file) {
     }
     dim.rows = _rows;
     dim.cols = _cols;
-    file.seekg(0, file.beg);
+
     file.clear();
+    file.seekg(0, file.beg);
+    
     return dim;
 }
 
@@ -55,7 +57,7 @@ int main(int argc, char* argv[]) {
     
     
     CharMatrix* matrix = readMatrixFromFile(infile);
-    //matrix->printMatrix();
+    matrix->printMatrix();
     infile.close();
     return 0;
 }

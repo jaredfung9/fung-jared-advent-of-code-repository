@@ -1,7 +1,8 @@
+CC = g++ -std=c++17 -g
 main: bin/charMatrix.o src/part1.cpp
-	g++ -g -o main src/part1.cpp bin/*
+	$(CC) -o main src/part1.cpp bin/*
 bin/charMatrix.o: src/charMatrix.cpp
-	g++ -g -c -o bin/charMatrix.o src/charMatrix.cpp
+	$(CC) -c -o bin/charMatrix.o src/charMatrix.cpp
 clean:
 	rm bin/*.o
 	rm main
