@@ -12,10 +12,5 @@ CharMatrix::CharMatrix(int _rows, int _cols) {
     }
 }
 
-int CharMatrix::getRows() {
-    return rows;
-}
-
-int CharMatrix::getCols() {
-    return cols;
-}
+int CharMatrix::getRows() { return rows; }
+int CharMatrix::getCols() { return cols; }

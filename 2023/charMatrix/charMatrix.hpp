@@ -1,4 +1,3 @@
-
 class CharMatrix {
     int rows, cols;
     public:
