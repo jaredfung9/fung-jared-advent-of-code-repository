@@ -46,6 +46,13 @@ CharMatrix* readMatrixFromFile(ifstream& infile) {
     return matrix;
 }
 
+int currentLoad(int depth, int rocks) {
+    int load = 0;
+    for (int i = 0; i < rocks; ++i) {
+        load += depth - i;
+    }
+    return load;
+}
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         cout << "Please provide an input file.\n";
@@ -57,9 +64,22 @@ int main(int argc, char* argv[]) {
     
     
     CharMatrix* matrix = readMatrixFromFile(infile);
-    for (int i = matrix->getRows() - 1; i >= 0; --i) {
-        cout << (*matrix)(i,0) << '\n';
+    int totalLoad = 0;
+    for (int j = 0; j < matrix->getCols(); ++j) {
+        int seenRocks = 0;
+        for (int i = matrix->getRows() - 1; i >= 0; --i) {
+            int currDepth = matrix->getRows() - i;
+            char c = (*matrix)(i,j);
+            if (c == 'O') {seenRocks += 1;}
+            if (c == '#') {   
+                totalLoad += currentLoad(currDepth - 1, seenRocks);        
+                seenRocks = 0;
+            }
+        }
+        totalLoad += currentLoad(matrix->getCols(), seenRocks);
     }
+    infile.close();
+    cout << "Total Load: " << totalLoad << '\n';
     infile.close();
     return 0;
 }
