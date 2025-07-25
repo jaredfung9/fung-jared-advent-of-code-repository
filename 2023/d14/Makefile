@@ -5,3 +5,6 @@ bin/charMatrix.o: src/charMatrix.cpp
 clean:
 	rm bin/*.o
 	rm main
+
+test1: main
+	./main inputs/test1.in
