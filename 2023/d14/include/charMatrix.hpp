@@ -6,4 +6,5 @@ class CharMatrix {
     int getRows();
     int getCols();
     char& operator() (int r, int c) { return matrixptr[r][c]; };
+    void printMatrix();
 };

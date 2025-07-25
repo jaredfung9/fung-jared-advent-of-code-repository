@@ -31,7 +31,18 @@ Dimensions getFileDimensions(ifstream& file) {
     return dim;
 }
 
-CharMatrix* readMatrixFromFile(ifstream& infile);
+CharMatrix* readMatrixFromFile(ifstream& infile) {
+    Dimensions dim = getFileDimensions(infile);
+    CharMatrix* matrix = new CharMatrix(dim.rows, dim.cols);
+    string buffer;
+    for (int i = 0; i < dim.rows; ++i) {
+        getline(infile, buffer);
+        for (int j = 0; j < dim.cols; ++j) {
+            (*matrix)(i, j) = buffer[j];
+        }
+    }
+    return matrix;
+}
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -42,8 +53,9 @@ int main(int argc, char* argv[]) {
     ifstream infile;
     infile.open(inputpath);
     
-    Dimensions dim = getFileDimensions(infile);
     
+    CharMatrix* matrix = readMatrixFromFile(infile);
+    //matrix->printMatrix();
     infile.close();
     return 0;
 }
