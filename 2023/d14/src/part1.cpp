@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
         totalLoad += currentLoad(matrix->getCols(), seenRocks);
     }
     infile.close();
-    cout << "Total Load: " << totalLoad << '\n';
+    cout << "PART 1: " << totalLoad << '\n';
     infile.close();
     return 0;
 }
