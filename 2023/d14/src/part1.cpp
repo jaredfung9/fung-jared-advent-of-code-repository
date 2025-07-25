@@ -26,11 +26,14 @@ Dimensions getFileDimensions(ifstream& file) {
     }
     dim.rows = _rows;
     dim.cols = _cols;
+    file.seekg(0, file.beg);
+    file.clear();
     return dim;
 }
 
+CharMatrix* readMatrixFromFile(ifstream& infile);
+
 int main(int argc, char* argv[]) {
-    cout << "Hello world: ";
     if (argc < 2) {
         cout << "Please provide an input file.\n";
         return -1;
@@ -40,7 +43,7 @@ int main(int argc, char* argv[]) {
     infile.open(inputpath);
     
     Dimensions dim = getFileDimensions(infile);
-    cout << "returned: " << dim.cols << ' ' << dim.rows << '\n';
+    
     infile.close();
     return 0;
 }
