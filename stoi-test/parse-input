@@ -1,0 +1,6 @@
+#!/bin/sh
+
+sed -i 's\L\-\' input.txt
+sed -i 's\R\\' input.txt
+sed -i 's\L\-\' testInput.txt
+sed -i 's\R\\' testInput.txt

@@ -1,0 +1,3 @@
+Register A: 3
+Register B: 0
+Register C: 0
