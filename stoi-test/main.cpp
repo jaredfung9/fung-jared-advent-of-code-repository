@@ -69,9 +69,12 @@ int countFile(std::string INPUT) {
     while (!FILE.eof()) {
         FILE >> strbuffer;
         x = stoi(strbuffer);
-        count += abs(x / GF);
+        count += abs(x) / GF;
+        x = x % GF;     // need to keep the sign to indicate direction of rotation for count check
+
         int prev = dial;
         dial = mod(x + dial, GF);
+        
         if (dial == 0) {
             count += 1;
         }
@@ -83,13 +86,12 @@ int countFile(std::string INPUT) {
                 count += 1;
             }
         }
-        //cout << x << ' ' << prev << ' ' << dial << ' ' << count << '\n';
     }
     FILE.close();
     return count;
 }
 int part2() {
-    cout << "PART 2 TEST: \n" << countFile("input.txt") << "\n";
+    cout << "PART 2: " << countFile("input.txt") << "\n";
     return 0;
 }
 
