@@ -1,3 +1,0 @@
-Register A: 44374556
-Register B: 0
-Register C: 0

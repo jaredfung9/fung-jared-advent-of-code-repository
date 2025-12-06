@@ -1,5 +1,0 @@
-DAY 5 BRAINSTORM:
-
-1. sort the pairs by the first number into lists
-2. select all the relevant rules using our sorted pairs.
-3. use a bitstring (100 bits) to track previously seen pages.
