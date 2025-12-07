@@ -11,15 +11,18 @@ using std::string;
 
 string INPUT = "inputs/input.txt";
 
-long generateID(int half, int exp) {
+/* Given an long HALF, appends HALF to generate a long of the from HALF|HALF
+(123) -> 123123
+*/
+long generateRepeatedID(long half, int exp) {
     return half + std::pow(10, exp) * half;
 }
 
-bool isInvalidID(int ID, int low, int upper) {
+bool isInvalidID(long ID, long low, long upper) {
     return (ID >= low) && (ID <= upper);
 }
 
-int countDigits(int x) {
+int digits(long x) {
     return std::log10(x) + 1;
 }
 
@@ -41,13 +44,13 @@ long countInvalidIDs(string* lowStr, string* upperStr) {
         half = stol((*lowStr).substr(0, midpoint));
     }
 
-    long ID = generateID(half, countDigits(half));
+    long ID = generateRepeatedID(half, digits(half));
     while (ID <= upper) {
         if (isInvalidID(ID, low, upper)) {
             sum += ID;
         }
         half++;
-        ID = generateID(half, countDigits(half));
+        ID = generateRepeatedID(half, digits(half));
     }
     return sum;
 };
@@ -70,14 +73,17 @@ void solvePart1() {
     cout << sum << '\n';
 }
 
-/* Given a substring SUB and output string's TARGET_SIZE, returns a long ID composed of the substring repeated.
+// NOTE: Although the problem was solved by thinking of each input as a substring, the actual type is long to accomodate the large inputs.
+//  The following explanations are written in terms of "strings" but are implemented numerically.
+
+/* Given a substring SUB and output string's TARGET_SIZE, returns an ID composed of SUB repeated the appropriate # of times.
 EG)     (123, 6)    ->      123123
         (1,5)       ->      11111 
 */
-long generateTestID(long SUB, int TARGET_SIZE) {
+long genRepeatSubID(long SUB, int TARGET_SIZE) {
     long sum = 0;
-    for (int i=0; i<TARGET_SIZE/countDigits(SUB); i++) {
-        sum += SUB*pow(10,countDigits(SUB)*i);
+    for (int i=0; i<TARGET_SIZE/digits(SUB); i++) {
+        sum += SUB*pow(10,digits(SUB)*i);
     }
     return sum;
 }
@@ -98,7 +104,7 @@ long long sumTargetSize(long LOW, long UPPER, int TARGET_SIZE, std::unordered_se
                 3 | [100,1000)
                 ...
             */
-            long testID = generateTestID(sub, TARGET_SIZE);
+            long testID = genRepeatSubID(sub, TARGET_SIZE);
             if ((testID >= LOW) && (testID <= UPPER)) {
                 if (SEEN->count(testID) == 0) {                         // If this ID has not been added to our GRAND SUM yet, add it to the hashmap & GRAND SUM.
                     SEEN->insert(testID);
@@ -109,17 +115,17 @@ long long sumTargetSize(long LOW, long UPPER, int TARGET_SIZE, std::unordered_se
     }
     return sum;                                                         // This is the sum of all invalidIDs of given TARGET_SIZE found in the given range.
 }
-long long sumRange(string* LOW, string* UPPER, std::unordered_set<long>*SEEN) {
-    long long sum = 0;
-    long lowL = stol(*LOW);
-    long upperL = stol(*UPPER);                 
-    int size = LOW->size();
-    while (size <= UPPER->size()) {                                     // Iterate through possible string sizes [LOW->size(), HIGH->size()]
-        sum += sumTargetSize(lowL, upperL, size, SEEN);
+
+long long sumRange(long LOW, long UPPER, std::unordered_set<long>*SEEN) {
+    long long sum = 0;              
+    int size = digits(LOW);
+    while (size <= digits(UPPER)) {                                     // Iterate through possible string sizes [LOW->size(), HIGH->size()]
+        sum += sumTargetSize(LOW, UPPER, size, SEEN);
         size++;
     }
     return sum;                                                         // This is the sum of all invalidIDs found in the given range.
 }
+
 void solvePart2() {
     cout << "PART 2: ";
     ifstream FILE;
@@ -127,15 +133,16 @@ void solvePart2() {
     if (FILE.fail()) {
         cout << "ERROR OPENING: " << INPUT << '\n';
     }
-    string low, upper;
+    string MIN, MAX;
     long long sum = 0;
     std::unordered_set<long> SEEN;                                      // Check that Invalid ID is not double counted between ranges.
     while (!FILE.eof()) {
-        FILE >> low >> upper;
-        sum += sumRange(&low, &upper, &SEEN);
+        FILE >> MIN >> MAX;
+        sum += sumRange(stol(MIN), stol(MAX), &SEEN);
     }
     cout << sum << '\n';                                                // OUTPUT: Grand sum (sum of all invalid IDs across all ranges).
 }
+
 int main() {
     solvePart1();
     solvePart2();
