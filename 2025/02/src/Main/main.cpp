@@ -28,7 +28,7 @@ int digits(long x) {
 
 /*  Given two std::string ptrs which indicate a range, LOWSTR and UPPERSTR, returns the sum from adding all invalid IDs in that range together. 
     Finds the first half of the LOWSTR, generates an ID by appending HALF|HALF (1234 -> 1234 1234), and then checking that ID against the range.
-    We continue incrementing HALF until we reach a test ID that is greater than UPPER, in which case we have finished the given range.
+    We continue incrementing HALF until we reach a test ID that is greater than MAX, in which case we have finished the given range.
 */
 long countInvalidIDs(string* lowStr, string* upperStr) {
     long sum = 0;
@@ -88,11 +88,11 @@ long genRepeatSubID(long SUB, int TARGET_SIZE) {
     return sum;
 }
 
-/* Given a range from LOW to UPPER, and the TARGET_SIZE of each valid ID,
+/* Given a range from MIN to MAX, and the TARGET_SIZE of each valid ID,
 Iterates through possible substrings, constructing test IDs with TARGET_SIZE and checking them against the range.
 Returns the sum of all invalid IDs.
 */
-long long sumTargetSize(long LOW, long UPPER, int TARGET_SIZE, std::unordered_set<long>*SEEN) {
+long long sumTargetSize(long MIN, long MAX, int TARGET_SIZE, std::unordered_set<long>*SEEN) {
     long long sum = 0;
     // i := substring size
     for (int i = 1; i <= TARGET_SIZE/2; i++) {                          // Iterate through substring_sizes
@@ -105,7 +105,7 @@ long long sumTargetSize(long LOW, long UPPER, int TARGET_SIZE, std::unordered_se
                 ...
             */
             long testID = genRepeatSubID(sub, TARGET_SIZE);
-            if ((testID >= LOW) && (testID <= UPPER)) {
+            if ((testID >= MIN) && (testID <= MAX)) {
                 if (SEEN->count(testID) == 0) {                         // If this ID has not been added to our GRAND SUM yet, add it to the hashmap & GRAND SUM.
                     SEEN->insert(testID);
                     sum += testID;
@@ -116,11 +116,11 @@ long long sumTargetSize(long LOW, long UPPER, int TARGET_SIZE, std::unordered_se
     return sum;                                                         // This is the sum of all invalidIDs of given TARGET_SIZE found in the given range.
 }
 
-long long sumRange(long LOW, long UPPER, std::unordered_set<long>*SEEN) {
+long long sumRange(long MIN, long MAX, std::unordered_set<long>*SEEN) {
     long long sum = 0;              
-    int size = digits(LOW);
-    while (size <= digits(UPPER)) {                                     // Iterate through possible string sizes [LOW->size(), HIGH->size()]
-        sum += sumTargetSize(LOW, UPPER, size, SEEN);
+    int size = digits(MIN);
+    while (size <= digits(MAX)) {                                     // Iterate through possible string sizes [MIN->size(), HIGH->size()]
+        sum += sumTargetSize(MIN, MAX, size, SEEN);
         size++;
     }
     return sum;                                                         // This is the sum of all invalidIDs found in the given range.
@@ -161,7 +161,7 @@ Can we identify IDs we can skip? How can we differentiate between 11111 and 1234
 123412 vs 123123
 
 123123 300000
-build through 1's // break ea section if an invalid is > UPPER
+build through 1's // break ea section if an invalid is > MAX
 build through 2's
 build through 3's
 
@@ -196,18 +196,18 @@ formula to build test ID= (STRING,int TARGET_SIZE) -> LONG
     return SUM
 
 main formula:
-    read in range (LOW, UPPER)
-    iterate through LOW substrings, passing appropriate SUBSTRING and TARGET_SIZE
+    read in range (MIN, MAX)
+    iterate through MIN substrings, passing appropriate SUBSTRING and TARGET_SIZE
         TODO: how to handle odd low and even upper, TARGET_SIZE changes.
         generate testID and check against range
-            * Maybe set TARGET_SIZE to LOW.size() then loop and increment TARGET_SIZE until TARGET_SIZE > HIGH.size()
-        if testID > UPPER, break and continue to next substring
+            * Maybe set TARGET_SIZE to MIN.size() then loop and increment TARGET_SIZE until TARGET_SIZE > HIGH.size()
+        if testID > MAX, break and continue to next substring
     break once SUBSTRING.size() > TARGET_SIZE/2.
     
 TODO:
     Figure out how to feed in all substrings.
         i:=[1,SIZE/2]
-        is it iterating [(10^i), (10^i+1)-1] // Can probably continue from each i when TEST > UPPER
+        is it iterating [(10^i), (10^i+1)-1] // Can probably continue from each i when TEST > MAX
                         [1,9] 
                         [10,99]
                         [100,999]?
