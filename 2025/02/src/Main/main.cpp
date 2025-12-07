@@ -10,6 +10,7 @@ using std::ifstream;
 using std::string;
 
 string INPUT = "inputs/input.txt";
+
 long generateID(int half, int exp) {
     return half + std::pow(10, exp) * half;
 }
@@ -22,11 +23,15 @@ int countDigits(int x) {
     return std::log10(x) + 1;
 }
 
-/* Given two std::string ptrs, LOWSTR and UPPERSTR, returns the sum from adding all invalid IDS in that range together. */
+/*  Given two std::string ptrs which indicate a range, LOWSTR and UPPERSTR, returns the sum from adding all invalid IDs in that range together. 
+    Finds the first half of the LOWSTR, generates an ID by appending HALF|HALF (1234 -> 1234 1234), and then checking that ID against the range.
+    We continue incrementing HALF until we reach a test ID that is greater than UPPER, in which case we have finished the given range.
+*/
 long countInvalidIDs(string* lowStr, string* upperStr) {
     long sum = 0;
     long low = stol((*lowStr));
     long upper = stol((*upperStr));
+
     int midpoint = lowStr->size() / 2;
     long half = 1;
     if ((lowStr->size() % 2) != 0) {
@@ -35,7 +40,7 @@ long countInvalidIDs(string* lowStr, string* upperStr) {
     } else {
         half = stol((*lowStr).substr(0, midpoint));
     }
-    
+
     long ID = generateID(half, countDigits(half));
     while (ID <= upper) {
         if (isInvalidID(ID, low, upper)) {
@@ -59,7 +64,6 @@ void solvePart1() {
     long long sum = 0;
     while (!FILE.eof()) {
         FILE >> low >> upper;
-        //cout << low << ' ' << upper << '\n';
         sum += countInvalidIDs(&low, &upper);
     }
     FILE.close();
@@ -67,8 +71,8 @@ void solvePart1() {
 }
 
 /* Given a substring SUB and output string's TARGET_SIZE, returns a long ID composed of the substring repeated.
-EG) (123, 6) -> 123123
-    (1,5) -> 11111 
+EG)     (123, 6)    ->      123123
+        (1,5)       ->      11111 
 */
 long generateTestID(long SUB, int TARGET_SIZE) {
     long sum = 0;
@@ -78,35 +82,43 @@ long generateTestID(long SUB, int TARGET_SIZE) {
     return sum;
 }
 
+/* Given a range from LOW to UPPER, and the TARGET_SIZE of each valid ID,
+Iterates through possible substrings, constructing test IDs with TARGET_SIZE and checking them against the range.
+Returns the sum of all invalid IDs.
+*/
 long long testTargetSize(long LOW, long UPPER, int TARGET_SIZE, std::unordered_set<long>*SEEN) {
     long long sum = 0;
-    for (int i = 1; i <= TARGET_SIZE/2; i++) {
-        for (long sub = pow(10,i-1); sub < pow(10,i); sub++) {
-            
+    // i := substring size
+    for (int i = 1; i <= TARGET_SIZE/2; i++) {                          // Iterate through substring_sizes
+        for (long sub = pow(10,i-1); sub < pow(10,i); sub++) {          // Iterate through substring range
+            /* substring size | substring range
+                i | [10^i-1, 10^i)
+                1 | [1,10)
+                2 | [10,100)
+                3 | [100,1000)
+                ...
+            */
             long testID = generateTestID(sub, TARGET_SIZE);
-            
             if ((testID >= LOW) && (testID <= UPPER)) {
-                if (SEEN->count(testID) > 0) {
-                    continue;
+                if (SEEN->count(testID) == 0) {                         // If this ID has not been added to our GRAND SUM yet, add it to the hashmap & GRAND SUM.
+                    SEEN->insert(testID);
+                    sum += testID;
                 }
-                SEEN->insert(testID);
-                sum += testID;
-                //cout << " MATCH: " << testID << " SUBSTRING: " << sub << " TARGET: " << TARGET_SIZE << " SEEN: " << SEEN.count(testID) << " CURRENT SUM: " << sum << '\n';
             }
         }
     }
-    return sum;
+    return sum;                                                         // This is the sum of all invalidIDs of given TARGET_SIZE found in the given range.
 }
 long long sumRange(string* LOW, string* UPPER, std::unordered_set<long>*SEEN) {
     long long sum = 0;
     long lowL = stol(*LOW);
-    long upperL = stol(*UPPER);
+    long upperL = stol(*UPPER);                 
     int size = LOW->size();
-    while (size <= UPPER->size()) {
+    while (size <= UPPER->size()) {                                     // Iterate through possible string sizes [LOW->size(), HIGH->size()]
         sum += testTargetSize(lowL, upperL, size, SEEN);
         size++;
     }
-    return sum;
+    return sum;                                                         // This is the sum of all invalidIDs found in the given range.
 }
 void solvePart2() {
     cout << "PART 2: ";
@@ -117,14 +129,12 @@ void solvePart2() {
     }
     string low, upper;
     long long sum = 0;
-    std::unordered_set<long> SEEN; // Check that Invalid ID is not double counted between ranges.
+    std::unordered_set<long> SEEN;                                      // Check that Invalid ID is not double counted between ranges.
     while (!FILE.eof()) {
         FILE >> low >> upper;
-        cout << '\n' << low << ' ' << upper << '\n';
         sum += sumRange(&low, &upper, &SEEN);
-        cout << "GRAND SUM: " << sum << '\n';
     }
-    cout << sum << '\n';
+    cout << sum << '\n';                                                // OUTPUT: Grand sum (sum of all invalid IDs across all ranges).
 }
 int main() {
     solvePart1();
@@ -132,9 +142,10 @@ int main() {
     
 }
 
-/* PART 2:
-INCORRECT: 46782612412 (HIGH)
-TEST: 46666175279 
+/* PART 2 BRAINSTORM:
+INCORRECT: 46782612412 (HIGH)       // was double counting invalid IDs that appeared in different ranges (eg, something like 222222 was counted twice)
+TEST: 46666175279 (CORRECT!)        
+
 Substrings only need to check while SUB.size() <= STR.size()/2.
 Check if STR.size() % SUB.size() == 0 before iterating through.//
 
