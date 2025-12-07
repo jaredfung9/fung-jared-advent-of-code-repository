@@ -86,7 +86,7 @@ long generateTestID(long SUB, int TARGET_SIZE) {
 Iterates through possible substrings, constructing test IDs with TARGET_SIZE and checking them against the range.
 Returns the sum of all invalid IDs.
 */
-long long testTargetSize(long LOW, long UPPER, int TARGET_SIZE, std::unordered_set<long>*SEEN) {
+long long sumTargetSize(long LOW, long UPPER, int TARGET_SIZE, std::unordered_set<long>*SEEN) {
     long long sum = 0;
     // i := substring size
     for (int i = 1; i <= TARGET_SIZE/2; i++) {                          // Iterate through substring_sizes
@@ -115,7 +115,7 @@ long long sumRange(string* LOW, string* UPPER, std::unordered_set<long>*SEEN) {
     long upperL = stol(*UPPER);                 
     int size = LOW->size();
     while (size <= UPPER->size()) {                                     // Iterate through possible string sizes [LOW->size(), HIGH->size()]
-        sum += testTargetSize(lowL, upperL, size, SEEN);
+        sum += sumTargetSize(lowL, upperL, size, SEEN);
         size++;
     }
     return sum;                                                         // This is the sum of all invalidIDs found in the given range.
