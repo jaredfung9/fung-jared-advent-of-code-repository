@@ -11,6 +11,8 @@ using std::string;
 
 string INPUT = "inputs/input.txt";
 
+/* BEGIN PART 1: */
+
 /* Given an long HALF, appends HALF to generate a long of the from HALF|HALF
 (123) -> 123123
 */
@@ -72,7 +74,7 @@ void solvePart1() {
     FILE.close();
     cout << sum << '\n';
 }
-
+/* BEGIN PART 2: */
 // NOTE: Although the problem was solved by thinking of each input as a substring, the actual type is long to accomodate the large inputs.
 //  The following explanations are written in terms of "strings" but are implemented numerically.
 
