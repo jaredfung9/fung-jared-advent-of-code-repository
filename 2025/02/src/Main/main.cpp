@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 #include <cmath>
-
+#include <unordered_set>
 
 using std::cout;
 using std::ifstream;
@@ -70,21 +70,42 @@ void solvePart1() {
 EG) (123, 6) -> 123123
     (1,5) -> 11111 
 */
-long generateTestID(string* SUB, int TARGET_SIZE) {
+long generateTestID(long SUB, int TARGET_SIZE) {
     long sum = 0;
-    long subL = stol(*SUB);
-    for (int i=0; i<TARGET_SIZE; i++) {
-        sum += subL*pow(10,SUB->size()*i);
+    for (int i=0; i<TARGET_SIZE/countDigits(SUB); i++) {
+        sum += SUB*pow(10,countDigits(SUB)*i);
     }
     return sum;
 }
 
-long long sumRange(string* LOW, string* UPPER) {
+long long testTargetSize(long LOW, long UPPER, int TARGET_SIZE, std::unordered_set<long>*SEEN) {
+    long long sum = 0;
+    for (int i = 1; i <= TARGET_SIZE/2; i++) {
+        for (long sub = pow(10,i-1); sub < pow(10,i); sub++) {
+            
+            long testID = generateTestID(sub, TARGET_SIZE);
+            
+            if ((testID >= LOW) && (testID <= UPPER)) {
+                if (SEEN->count(testID) > 0) {
+                    continue;
+                }
+                SEEN->insert(testID);
+                sum += testID;
+                //cout << " MATCH: " << testID << " SUBSTRING: " << sub << " TARGET: " << TARGET_SIZE << " SEEN: " << SEEN.count(testID) << " CURRENT SUM: " << sum << '\n';
+            }
+        }
+    }
+    return sum;
+}
+long long sumRange(string* LOW, string* UPPER, std::unordered_set<long>*SEEN) {
     long long sum = 0;
     long lowL = stol(*LOW);
     long upperL = stol(*UPPER);
     int size = LOW->size();
-
+    while (size <= UPPER->size()) {
+        sum += testTargetSize(lowL, upperL, size, SEEN);
+        size++;
+    }
     return sum;
 }
 void solvePart2() {
@@ -96,10 +117,14 @@ void solvePart2() {
     }
     string low, upper;
     long long sum = 0;
+    std::unordered_set<long> SEEN; // Check that Invalid ID is not double counted between ranges.
     while (!FILE.eof()) {
         FILE >> low >> upper;
-        //cout << low << ' ' << upper << '\n';
+        cout << '\n' << low << ' ' << upper << '\n';
+        sum += sumRange(&low, &upper, &SEEN);
+        cout << "GRAND SUM: " << sum << '\n';
     }
+    cout << sum << '\n';
 }
 int main() {
     solvePart1();
@@ -108,6 +133,8 @@ int main() {
 }
 
 /* PART 2:
+INCORRECT: 46782612412 (HIGH)
+TEST: 46666175279 
 Substrings only need to check while SUB.size() <= STR.size()/2.
 Check if STR.size() % SUB.size() == 0 before iterating through.//
 
@@ -161,7 +188,8 @@ main formula:
     
 TODO:
     Figure out how to feed in all substrings.
-        is it iterating [(10^i), (10^i+1)-1]
+        i:=[1,SIZE/2]
+        is it iterating [(10^i), (10^i+1)-1] // Can probably continue from each i when TEST > UPPER
                         [1,9] 
                         [10,99]
                         [100,999]?
