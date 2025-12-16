@@ -48,11 +48,11 @@ int processFile(const char* filename) {
 }
 
 class batteryMap {
-    std::unordered_map<string*, int64_t>* maps[MAX_BATTERIES];
+    std::unordered_map<string, int64_t>* maps[MAX_BATTERIES];
     public:
     batteryMap() {
         for (int i = 0; i < MAX_BATTERIES; i++) {
-            maps[i] = new std::unordered_map<string*, int64_t>;
+            maps[i] = new std::unordered_map<string, int64_t>;
         }
     }
     ~batteryMap() {
@@ -64,13 +64,13 @@ class batteryMap {
         if (batteries > MAX_BATTERIES) {
             return;
         }
-        (*maps[batteries-1])[str] = val;
+        (*maps[batteries-1])[*str] = val;
     }
     int64_t lookup(string* str, int batteries) {
         if (batteries > MAX_BATTERIES) {
             return -1;
         }
-        auto result = maps[batteries-1]->find(str);
+        auto result = maps[batteries-1]->find(*str);
         if (result != maps[batteries-1]->end()) {
             return result->second;
         }
@@ -79,27 +79,64 @@ class batteryMap {
 };
 
 int64_t concatInt(int64_t l, int64_t r, int batteries) {
-    return l*pow(10,batteries-1) + r;
+    return batteries == 1 ? l : l*pow(10,batteries-1) + r;
 }
 
 int64_t max(int64_t a, int64_t b) {
     return a > b ? a : b;
 }
-int main() {
-    cout << "PART 1: " << processFile("input.txt") << '\n'; // PART 1: 17278
-    batteryMap* myMap = new batteryMap();
-    int64_t _val1 = 12;
-    int64_t _val2 = 3;
-    string _str = "123";
-    myMap->store(&_str,1, _val1);
-    myMap->store(&_str,2, _val2);
-    int64_t look1 = myMap->lookup(&_str, 1);
-    int64_t look2 = myMap->lookup(&_str, 2);
-    int64_t look3 = myMap->lookup(&_str, 3);
+/* Calculates the largestCombo of a given bank, stores results in map, and returns the value.*/
+int64_t largestCombo(batteryMap* map, string* str, int batteries) {
+    if (batteries <= 0) {
+        return 0;
+    }
 
-    string sub1 = _str.substr(0,1);
-    string sub2 = _str.substr(1);
-    cout << "TEST:\n" << look1 << ' ' << look2 << ' ' << look3 <<'\n';
-    cout << sub1 << ' ' << sub2 << ' ' << concatInt(stoi(sub1), stoi(sub2), 3)<<'\n';
+    if (map->lookup(str, batteries) != -1) {
+        return map->lookup(str, batteries);
+    } 
+    else {
+        if (str->size() == 1 ) {
+            return ctoi(str->at(0));
+        }
+        string sub = str->substr(1);
+        int64_t a = concatInt(ctoi(str->at(0)), largestCombo(map, &sub, batteries-1), batteries);
+        int64_t b = largestCombo(map, &sub, batteries);
+        map->store(str, batteries, max(a,b));
+        return map->lookup(str, batteries);
+    }
+}
+
+/* Fills out batteryMap starting from combos of a single battery all the way to combos of MAX_BATTERIES. */
+int64_t largestGigaJolt(string* str) {
+    batteryMap* map = new batteryMap();
+    for (int batt = 1; batt <= MAX_BATTERIES; batt++) {
+        for (int i = str->size()-1; i >= 0; i--) {
+            string sub = str->substr(i);
+            largestCombo(map, &sub, batt);
+        }
+    }
     
+    int64_t val = map->lookup(str,MAX_BATTERIES);
+    delete map;
+    cout << *str << ' ' << val << '\n';
+    return val;
+}
+
+int64_t processFile2(const char* filename) {
+    std::ifstream file;
+    file.open(filename);
+    string input;
+    int64_t total = 0;
+    while (!file.eof()) {
+        file >> input;
+        total += largestGigaJolt(&input);
+    }
+    file.close();
+    return total;
+}
+int main() {
+    cout << "PART 1:\n" << processFile("input.txt") << '\n'; // PART 1: 17278
+    //cout << "PART 2:\n" << processFile2("test-input.txt") << '\n';
+    string mystr = "987654321111111";
+    cout << largestGigaJolt(&mystr) << '\n';
 }
