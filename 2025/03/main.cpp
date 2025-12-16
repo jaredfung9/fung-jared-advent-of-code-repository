@@ -98,6 +98,9 @@ int64_t largestCombo(batteryMap* map, string* str, int batteries) {
         if (str->size() == 1 ) {
             return ctoi(str->at(0));
         }
+        if (str->size() < batteries) {
+            return 0;
+        }
         string sub = str->substr(1);
         int64_t a = concatInt(ctoi(str->at(0)), largestCombo(map, &sub, batteries-1), batteries);
         int64_t b = largestCombo(map, &sub, batteries);
@@ -110,15 +113,14 @@ int64_t largestCombo(batteryMap* map, string* str, int batteries) {
 int64_t largestGigaJolt(string* str) {
     batteryMap* map = new batteryMap();
     for (int batt = 1; batt <= MAX_BATTERIES; batt++) {
-        for (int i = str->size()-1; i >= 0; i--) {
+        for (int i = str->size()-batt; i >= 0; i--) {
             string sub = str->substr(i);
-            largestCombo(map, &sub, batt);
+            int64_t x = largestCombo(map, &sub, batt);
         }
     }
     
     int64_t val = map->lookup(str,MAX_BATTERIES);
     delete map;
-    cout << *str << ' ' << val << '\n';
     return val;
 }
 
@@ -136,7 +138,7 @@ int64_t processFile2(const char* filename) {
 }
 int main() {
     cout << "PART 1:\n" << processFile("input.txt") << '\n'; // PART 1: 17278
-    //cout << "PART 2:\n" << processFile2("test-input.txt") << '\n';
-    string mystr = "987654321111111";
-    cout << largestGigaJolt(&mystr) << '\n';
+    cout << "PART 2:\n" << processFile2("input.txt") << '\n'; // PART 2: 171528556468625
+    //string mystr = "234234234234278";
+    //cout << largestGigaJolt(&mystr) << '\n';
 }
