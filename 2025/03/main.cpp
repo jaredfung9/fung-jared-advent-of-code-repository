@@ -11,13 +11,11 @@ For signed values: range calculations MIN:= -2^(b-1)-1 and MAX:= 2^(b-1)-1; the 
 |negative vals| + 1 + |positive vals| */
 
 const int MAX_BATTERIES = 12;
-const int MAX_BANK_SIZE = 100;
 
 using std::string, std::cout, std::ifstream;
-string DEMO_STRING = "987654321111111";
 
 int ctoi(char c) {
-    return int(c) - 48;
+    return int(c) - 48;     // Refer to ASCII
 }
 
 int largestJolt(string* bankStr) {
@@ -47,6 +45,7 @@ int processFile(const char* filename) {
     return total;
 }
 
+/* BEGIN PART 2 */
 class batteryMap {
     std::unordered_map<string, int64_t>* maps[MAX_BATTERIES];
     public:
@@ -60,16 +59,14 @@ class batteryMap {
             delete maps[i];
         }
     }
+
     void store(string* str, int batteries, int64_t val) {
-        if (batteries > MAX_BATTERIES) {
-            return;
-        }
+        if (batteries > MAX_BATTERIES) { return; }
         (*maps[batteries-1])[*str] = val;
     }
+
     int64_t lookup(string* str, int batteries) {
-        if (batteries > MAX_BATTERIES) {
-            return -1;
-        }
+        if (batteries > MAX_BATTERIES) { return -1; }
         auto result = maps[batteries-1]->find(*str);
         if (result != maps[batteries-1]->end()) {
             return result->second;
@@ -118,7 +115,6 @@ int64_t largestGigaJolt(string* str) {
             int64_t x = largestCombo(map, &sub, batt);
         }
     }
-    
     int64_t val = map->lookup(str,MAX_BATTERIES);
     delete map;
     return val;
@@ -139,6 +135,4 @@ int64_t processFile2(const char* filename) {
 int main() {
     cout << "PART 1:\n" << processFile("input.txt") << '\n'; // PART 1: 17278
     cout << "PART 2:\n" << processFile2("input.txt") << '\n'; // PART 2: 171528556468625
-    //string mystr = "234234234234278";
-    //cout << largestGigaJolt(&mystr) << '\n';
 }
