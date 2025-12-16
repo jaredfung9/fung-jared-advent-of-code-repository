@@ -1,2 +1,2 @@
-main: main.cpp
-	g++ -g -o main main.cpp
+main.out: main.cpp
+	g++ -g -o main.out main.cpp

@@ -58,7 +58,7 @@ int64_t largestGigaJolt(string* bankStr) {
     for (int i = 0; i < map.size(); i++) {
         map[i].fill(-1);
     } // initialize each value to -1
-    printMap(&map);
+    
     for (int batt = 1; batt <= 12; batt++) {}
 }
 int main() {
