@@ -81,6 +81,10 @@ class batteryMap {
 int64_t concatInt(int64_t l, int64_t r, int batteries) {
     return l*pow(10,batteries-1) + r;
 }
+
+int64_t max(int64_t a, int64_t b) {
+    return a > b ? a : b;
+}
 int main() {
     cout << "PART 1: " << processFile("input.txt") << '\n'; // PART 1: 17278
     batteryMap* myMap = new batteryMap();
@@ -96,5 +100,6 @@ int main() {
     string sub1 = _str.substr(0,1);
     string sub2 = _str.substr(1);
     cout << "TEST:\n" << look1 << ' ' << look2 << ' ' << look3 <<'\n';
-    cout << sub1 << ' ' << sub2 << ' ' << concatInt(stoi(sub1), stoi(sub2), 3);
+    cout << sub1 << ' ' << sub2 << ' ' << concatInt(stoi(sub1), stoi(sub2), 3)<<'\n';
+    
 }
