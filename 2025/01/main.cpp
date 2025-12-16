@@ -100,3 +100,6 @@ int main() {
     part2();
     return 0;
 }
+
+// Guesses:
+// 1. 5658 : too high
