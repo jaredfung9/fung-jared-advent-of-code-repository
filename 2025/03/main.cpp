@@ -4,6 +4,7 @@
 #include <cstdint> // integer type defintions
 #include <cmath>
 #include <algorithm>
+#include <unordered_map>
 #include <array>
 /* Remember, max value depends on number of bits && whether the value is signed. 2^(b)-1 gives the maximum value for an unsigned int.
 For signed values: range calculations MIN:= -2^(b-1)-1 and MAX:= 2^(b-1)-1; the CARDINALITY OF THE ENTIRE RANGE is always = 2^b =
@@ -46,6 +47,46 @@ int processFile(const char* filename) {
     return total;
 }
 
+class batteryMap {
+    std::unordered_map<string*, int64_t>* maps[MAX_BATTERIES];
+    public:
+    batteryMap() {
+        for (int i = 0; i < MAX_BATTERIES; i++) {
+            maps[i] = new std::unordered_map<string*, int64_t>;
+        }
+    }
+    ~batteryMap() {
+        for (int i = 0; i <MAX_BATTERIES; i++) {
+            delete maps[i];
+        }
+    }
+    void store(string* str, int batteries, int64_t val) {
+        if (batteries > MAX_BATTERIES) {
+            return;
+        }
+        (*maps[batteries-1])[str] = val;
+    }
+    int64_t lookup(string* str, int batteries) {
+        if (batteries > MAX_BATTERIES) {
+            return;
+        }
+        auto result = maps[batteries-1]->find(str);
+        if (result != maps[batteries-1]->end()) {
+            return result->second;
+        }
+        return -1;
+    }
+};
 int main() {
     cout << "PART 1: " << processFile("input.txt") << '\n'; // PART 1: 17278
+    batteryMap* myMap = new batteryMap();
+    int64_t _val1 = 12;
+    int64_t _val2 = 3;
+    string _str = "123";
+    myMap->store(&_str,1, _val1);
+    myMap->store(&_str,2, _val2);
+    int64_t look1 = myMap->lookup(&_str, 1);
+    int64_t look2 = myMap->lookup(&_str, 2);
+    int64_t look3 = myMap->lookup(&_str, 3);
+    cout << "TEST:\n" << look1 << ' ' << look2 << ' ' << look3 <<'\n';
 }
