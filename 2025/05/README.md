@@ -39,4 +39,27 @@ if a query is in a range, increment count and continue to the next query
 * IEP might not work since ideally we want to sequentially read in the sets one by one and update our count as necessary.
 * Building some sort of tree might be useful.
 * Let's build a binary tree. The left and right child will rep. the MIN and MAX range which we update as we read in values. Let roots with -1 indicate that we can check a range.
-* To check for an overlapping range, we can continually traverse the binary tree until we find a range that has MIN in it. Then we continually traverse the tree until we either find a valid range for MAX or reach the end. We squish the tree by replacing the first MIN range's right child with MAX or the found right child.
+* To check for an overlapping range, we can continually traverse the binary tree until we find a range that has MIN in it. Then we continually traverse the tree until we either find a valid range for MAX or reach the end. We squish the tree by replacing the first MIN range's right child with MAX or the found right child
+
+## Build the binary tree and use it to check if we've already counted a range.
+* Interval trees? Center based?
+* Sort the range by start and end?
+* What if we first sort the ranges by the starting range then "build-up"?
+* SO: https://stackoverflow.com/questions/4542892/possible-interview-question-how-to-find-all-overlapping-intervals
+* Basically, throw everything into an array, marking if an interval is the start or end. Sort. Then iterate through.
+
+## Walkthrough
+* Ranges: (3,5), (10,14), (16,20), (12,18)
+* Label each as starting and endpoint and place all into a single array. then sort: [3S, 5E, 10S, 14E, 16S, 20E, 12S, 18E] ->
+[3S, 5E, 10S, 12S, 14E, 16S, 18E, 20E] ->
+[3S, 5E, 10S, 14E, 16S, 18E, 20E]
+
+## Just sort by starting point, and walk from left-to-right, combining as necessary
+
+(3,5) (10,14), (16,20), (12,18)
+(3,5) (10,14) (12,18) (16,20)
+(a) (3,5) (10,14)
+(b) (3,5) (10,18) // we read in (12,18)
+(c) (3,5) (10,20) // we read in (16,20)
+
+then we iterate through the list one more time to count the cardinality
