@@ -63,3 +63,7 @@ if a query is in a range, increment count and continue to the next query
 (c) (3,5) (10,20) // we read in (16,20)
 
 then we iterate through the list one more time to count the cardinality
+
+1. Place all ranges into Range Struct (start, end)
+1. Custom Comparer (lhs, rhs) needs to return true when (lhs less than rhs)
+1. Feed into algorithm's sort std::sort(v.begin(), v.end(), &customComp)
