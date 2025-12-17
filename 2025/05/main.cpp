@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
+#include <algorithm>
 
 using std::shared_ptr, std::vector, std::string, std::ifstream, std::cout;
 typedef struct {
@@ -60,6 +61,18 @@ void printRange(shared_ptr<vector<RangePtr>> ranges) {
         cout << it[0]->first << ' '  << it[0]->second << '\n';
     }
 }
+bool comp(RangePtr const& a, RangePtr const& b) {
+    return a->first < b->first;
+}
+
+int countFreshRange(string* filename) {
+    shared_ptr<vector<RangePtr>> ranges = loadRange(filename);
+    printRange(ranges);
+    cout << "SORTING\n";
+    std::sort(ranges->begin(), ranges->end(), &comp);
+    printRange(ranges);
+    return 0;
+}
 int main() {
     string test_ranges = "inputs/test-ranges.txt";
     string test_queries = "inputs/test-queries.txt";
@@ -67,4 +80,6 @@ int main() {
     string queries = "inputs/queries.txt";
     shared_ptr<vector<RangePtr>> rangeVec = loadRange(&ranges);
     cout << "PART 1: " << countFreshIngredients(rangeVec, &queries) << '\n'; // PART 1: 770
+    cout << "PART 2: ";
+    countFreshRange(&test_ranges);
 }
