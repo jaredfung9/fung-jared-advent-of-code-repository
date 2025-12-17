@@ -14,7 +14,7 @@ use basic pair struct, load into a vector
 1. Process Queries
 use vector to iterate through loaded ranges;  
 if a query is in a range, increment count and continue to the next query  
-
+---
 # oops pre-mature optimization
 ## Brainstorming 
 * Goal: process ranges and combine or cull entries as needed.
@@ -28,7 +28,7 @@ if a query is in a range, increment count and continue to the next query
 * Load Order: A > B > C
 * When we load B, we initially have a disjoint set (no overlap with A)
 * When we load C, we should ideally recognize that we have a connection from A to B via C
-
+---
 # PART 2
 ## Prompt Analysis
 * Goal is to count the cardinality of the union of all sets
@@ -67,3 +67,7 @@ then we iterate through the list one more time to count the cardinality
 1. Place all ranges into Range Struct (start, end)
 1. Custom Comparer (lhs, rhs) needs to return true when (lhs less than rhs)
 1. Feed into algorithm's sort std::sort(v.begin(), v.end(), &customComp)
+
+sources:
+1. https://stackoverflow.com/questions/873715/c-sort-with-structs
+1. https://stackoverflow.com/questions/4542892/possible-interview-question-how-to-find-all-overlapping-intervals
