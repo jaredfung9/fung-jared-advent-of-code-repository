@@ -65,13 +65,42 @@ bool comp(RangePtr const& a, RangePtr const& b) {
     return a->first < b->first;
 }
 
-int countFreshRange(string* filename) {
+long long cardinality(int64_t a, int64_t b) {
+    return (b - a) + 1;
+}
+
+long long countFreshRange(string* filename) {
     shared_ptr<vector<RangePtr>> ranges = loadRange(filename);
-    printRange(ranges);
-    cout << "SORTING\n";
     std::sort(ranges->begin(), ranges->end(), &comp);
-    printRange(ranges);
-    return 0;
+    auto joins = std::make_shared<vector<RangePtr>>();
+    joins->push_back((*ranges)[0]);
+    for (long unsigned int i = 1; i < ranges->size(); i++) {
+        RangePtr prev_interval = joins->back();
+        RangePtr curr_interval = (*ranges)[i];
+        int64_t c_min = curr_interval->first;
+        int64_t p_min = prev_interval->first;
+        int64_t p_max = prev_interval->second;
+
+        if (c_min <= p_max) {
+            if (c_min >= p_min) {
+                prev_interval->second = curr_interval->second;
+            } 
+            else if (c_min < p_min) {
+                joins->pop_back();
+                joins->push_back(curr_interval);
+            }
+        }
+        else {
+            joins->push_back(curr_interval);
+        }
+    }
+    
+    long long count = 0;
+    for (long unsigned int i = 0; i < joins->size(); i++) {
+        RangePtr interval = (*joins)[i];
+        count += cardinality(interval->first, interval->second);
+    }
+    return count;
 }
 int main() {
     string test_ranges = "inputs/test-ranges.txt";
@@ -80,6 +109,12 @@ int main() {
     string queries = "inputs/queries.txt";
     shared_ptr<vector<RangePtr>> rangeVec = loadRange(&ranges);
     cout << "PART 1: " << countFreshIngredients(rangeVec, &queries) << '\n'; // PART 1: 770
-    cout << "PART 2: ";
-    countFreshRange(&test_ranges);
+    cout << "PART 2: " << countFreshRange(&ranges) << '\n';
+
+    /* PART 2:
+    1748547211 - TOO LOW (used int64_t instead...)
+    6043514507 - TOO LOW (used int64_t for cardinality...)
+    326028421019275 - TOO LOW 
+    326028421019275
+    */
 }
