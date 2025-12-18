@@ -5,10 +5,10 @@
 #include <string>
 #include <memory>
 #include <sstream>
-
+#include <cmath>
 #include <cstdint>
 
-using std::cout, std::ifstream, std::vector, std::stack, std::string, std::istringstream, std::shared_ptr;
+using std::cout, std::ifstream, std::vector, std::stack, std::string, std::istringstream, std::shared_ptr, std::pow;
 
 shared_ptr<stack<char>> loadOps(string* filename) {
     ifstream FILE;
@@ -130,13 +130,23 @@ shared_ptr<vector<sharedStackPtr>> loadBanks(string* filename) {
 // Returns 0 if all banks returned ' ';
 int64_t getTerm(shared_ptr<vector<sharedStackPtr>> banks) {
     int64_t term = 0;
+    int place = 0;
+    stack<int> term_stack;
     for (unsigned long i = 0; i < banks->size(); i++) {
         sharedStackPtr bank = (*banks)[i];
         char c = bank->top();
         bank->pop();
-        cout << c << ' ';
+        if (c == ' ') {
+            continue;
+        }
+        
+        term_stack.push(atoi(&c));
+        place += 1;
     }
-    cout << '\n';
+    for (int i = 0; i < place; i++) {
+        term += term_stack.top()*pow(10,i);
+        term_stack.pop();
+    }
     return term;
 }
 void part2() {
@@ -144,22 +154,24 @@ void part2() {
     string OPINPUT = "inputs/test-ops.txt";
     sharedStackPtr ops = loadOps(&OPINPUT); 
     shared_ptr<vector<sharedStackPtr>> banks = loadBanks(&NUMINPUT);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    getTerm(banks);
-    
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
+
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
+
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
+
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
+    cout << getTerm(banks) << '\n';
 }
 int main() {
     part1(); // PART 1: 7098065460541
