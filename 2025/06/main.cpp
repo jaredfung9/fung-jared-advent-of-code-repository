@@ -10,9 +10,6 @@
 
 using std::cout, std::ifstream, std::vector, std::stack, std::string, std::istringstream, std::shared_ptr;
 
-string NUMINPUT = "inputs/nums.txt";
-string OPINPUT = "inputs/ops.txt";
-
 shared_ptr<stack<char>> loadOps(string* filename) {
     ifstream FILE;
     FILE.open(*filename);
@@ -70,6 +67,8 @@ int64_t mulBanks(vector<shared_ptr<stack<int>>>* banks) {
     return prod;
 }
 void part1() {
+    string NUMINPUT = "inputs/nums.txt";
+    string OPINPUT = "inputs/ops.txt";
     shared_ptr<stack<char>> ops = loadOps(&OPINPUT);
     // cout << "Loaded Ops: " << ops->size() << '\n';
     
@@ -106,6 +105,35 @@ void part1() {
     cout << "PART 1: " << total << '\n';
 }
 
+typedef shared_ptr<stack<char>> sharedStackPtr;
+
+sharedStackPtr stoStack(string* str) {
+    auto _stack = std::make_shared<stack<char>>();
+    for (unsigned long i = 0; i < str->size(); i++) {
+        char c = str->at(i);
+        _stack->push(c);
+    }
+    return _stack;
+}
+
+shared_ptr<vector<sharedStackPtr>> loadBanks(string* filename) {
+    ifstream FILE;
+    FILE.open(*filename);
+    auto banks = std::make_shared<vector<sharedStackPtr>>();
+    string buffer;
+    while (std::getline(FILE,buffer)) {
+        banks->push_back(stoStack(&buffer));
+    }
+    FILE.close();
+    return banks;
+}
+void part2() {
+    string NUMINPUT = "inputs/test-nums.txt";
+    string OPINPUT = "inputs/test-ops.txt";
+    sharedStackPtr ops = loadOps(&OPINPUT); 
+    shared_ptr<vector<sharedStackPtr>> banks = loadBanks(&NUMINPUT);
+}
 int main() {
     part1(); // PART 1: 7098065460541
+    part2();
 }    
