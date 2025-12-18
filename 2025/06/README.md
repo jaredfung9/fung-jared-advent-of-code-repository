@@ -10,3 +10,36 @@ Then, build a matrix and transpose it.
 
 ## Minor analysis
 * We only have four rows, let's just read them into four vectors and iterate forward (if order doesn't matter, stack also works and we pop)
+
+## Debugging missing pops
+* Pops are not aligned with accesses
+Sample output:
+5 5 4 =401
+4 4 3 =302
+3 3 2 =1934226
+2 2 1 =398
+1 1 =168
+=1
+=0
+* suspecting that stacks are improperly allocated.
+Order of accesses:  
+5 0x63a19abb54f0
+5 0x63a19abb57e0
+4 0x63a19abb5ae0
+4 0x63a19abb54f0
+4 0x63a19abb57e0
+3 0x63a19abb5ae0
+3 0x63a19abb54f0
+3 0x63a19abb57e0
+2 0x63a19abb5ae0
+2 0x63a19abb54f0
+2 0x63a19abb57e0
+1 0x63a19abb5ae0
+1 0x63a19abb54f0
+1 0x63a19abb57e0
+
+* Looks like stacks are being improperly built? 5 5 4
+* Each stack should have 4 items
+* suspecting that it's pushing the newlines to the stack
+* main issue is input is not being read correctly
+* double adding last element? seems like EOF check is not working how I expected
