@@ -1,0 +1,3 @@
+sed -i 's/\./0/g' inputs/demo.txt
+sed -i 's/\^/1/g' inputs/demo.txt
+sed -i 's/S/1/g' inputs/demo.txt
