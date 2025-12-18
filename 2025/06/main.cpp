@@ -127,11 +127,39 @@ shared_ptr<vector<sharedStackPtr>> loadBanks(string* filename) {
     FILE.close();
     return banks;
 }
+// Returns 0 if all banks returned ' ';
+int64_t getTerm(shared_ptr<vector<sharedStackPtr>> banks) {
+    int64_t term = 0;
+    for (unsigned long i = 0; i < banks->size(); i++) {
+        sharedStackPtr bank = (*banks)[i];
+        char c = bank->top();
+        bank->pop();
+        cout << c << ' ';
+    }
+    cout << '\n';
+    return term;
+}
 void part2() {
     string NUMINPUT = "inputs/test-nums.txt";
     string OPINPUT = "inputs/test-ops.txt";
     sharedStackPtr ops = loadOps(&OPINPUT); 
     shared_ptr<vector<sharedStackPtr>> banks = loadBanks(&NUMINPUT);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    getTerm(banks);
+    
 }
 int main() {
     part1(); // PART 1: 7098065460541

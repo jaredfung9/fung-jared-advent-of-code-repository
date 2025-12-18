@@ -63,3 +63,30 @@ readTermFromBank(BANKS):
     returns int TERM;
     else returns 0 (end of problem, all banks returned ' ');
 when readTermFromBank == 0; apply operation
+
+## Reading terms
+OUTPUT:  
+    4  
+4 3 1  
+6 2 3  
+  
+1 7 5  
+5 8 1  
+  3 2  
+  
+8  
+2 4 8  
+3 6 9  
+
+3 5 6  
+2 4  
+1  
+
+### Algorithm
+term := 0  
+i := 0
+1. track place
+1. read x from each bank. if ' ' do nothing.
+1. else add x * pow(10,i) to term
+
+return term when all banks return ' '
