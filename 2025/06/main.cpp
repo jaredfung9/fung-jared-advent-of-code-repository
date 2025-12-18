@@ -134,6 +134,9 @@ int64_t getTerm(shared_ptr<vector<sharedStackPtr>> banks) {
     stack<int> term_stack;
     for (unsigned long i = 0; i < banks->size(); i++) {
         sharedStackPtr bank = (*banks)[i];
+        if (bank->empty()) {
+            return 0; // Base case end of string
+        }
         char c = bank->top();
         bank->pop();
         if (c == ' ') {
@@ -149,29 +152,49 @@ int64_t getTerm(shared_ptr<vector<sharedStackPtr>> banks) {
     }
     return term;
 }
+shared_ptr<vector<int>> termVec(shared_ptr<vector<sharedStackPtr>> banks) {
+    auto vec = std::make_shared<vector<int>>();
+    int term = getTerm(banks);
+    while (term != 0) {
+        vec->push_back(term);
+        term = getTerm(banks);
+    }
+    return vec;
+}
+void printVec(shared_ptr<vector<int>> vec) {
+    for (unsigned long i = 0; i < vec->size(); i++) {
+        cout << vec->at(i) << '\n';
+    }
+}
+int sumVec(shared_ptr<vector<int>> vec) {
+    int sum = 0;
+    for (unsigned long i = 0; i < vec->size(); i++) {
+        sum += vec->at(i);
+    }
+    return sum;
+}
+
+int mulVec(shared_ptr<vector<int>> vec) {
+    int prod = 1;
+    for (unsigned long i = 0; i < vec->size(); i++) {
+        prod *= vec->at(i);
+    }
+    return prod;
+}
+
 void part2() {
     string NUMINPUT = "inputs/test-nums.txt";
     string OPINPUT = "inputs/test-ops.txt";
     sharedStackPtr ops = loadOps(&OPINPUT); 
     shared_ptr<vector<sharedStackPtr>> banks = loadBanks(&NUMINPUT);
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
 
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
-
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
-
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
-    cout << getTerm(banks) << '\n';
+    int64_t total = 0;
+    shared_ptr<vector<int>> vec = termVec(banks);
+    while (!vec->empty()) {
+        printVec(vec);
+        vec = termVec(banks);
+    }
+    cout << "PART 2: " << total << '\n';
 }
 int main() {
     part1(); // PART 1: 7098065460541

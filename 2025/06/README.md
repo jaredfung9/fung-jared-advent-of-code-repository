@@ -86,7 +86,7 @@ OUTPUT:
 term := 0  
 i := 0
 1. track place
-1. read x from each bank. if ' ' do nothing.
+1. read x from each bank. if ' ' do nothing, otherwise push to a buffer stack
 1. else add x * pow(10,i) to term
 
 return term when all banks return ' '
