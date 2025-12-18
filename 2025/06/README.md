@@ -46,3 +46,20 @@ Order of accesses:
 * maybe getline isn't reading in an EOF to the istringstream
 * needed to use (buffer_stream >> x) as the while condition
 * forgot the break statement in switch and cases...
+
+# PART 2:
+123 328  51 64 
+ 45 64  387 23 
+  6 98  215 314
+* The line adjustment now matters
+For the right most problem (+)  
+4 + 431 + 623
+* we need to treat each CHAR as a cell
+* better idea: treat each string as a stack of chars (ie just iterate through the string);
+* store terms in a vector
+* when all strings return ' ', we pop-off an operator and apply the operator to all terms in the vector.
+
+readTermFromBank(BANKS):
+    returns int TERM;
+    else returns 0 (end of problem, all banks returned ' ');
+when readTermFromBank == 0; apply operation
