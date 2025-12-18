@@ -43,3 +43,5 @@ Order of accesses:
 * suspecting that it's pushing the newlines to the stack
 * main issue is input is not being read correctly
 * double adding last element? seems like EOF check is not working how I expected
+* maybe getline isn't reading in an EOF to the istringstream
+* needed to use (buffer_stream >> x) as the while condition
