@@ -166,16 +166,16 @@ void printVec(shared_ptr<vector<int>> vec) {
         cout << vec->at(i) << '\n';
     }
 }
-int sumVec(shared_ptr<vector<int>> vec) {
-    int sum = 0;
+int64_t sumVec(shared_ptr<vector<int>> vec) {
+    int64_t sum = 0;
     for (unsigned long i = 0; i < vec->size(); i++) {
         sum += vec->at(i);
     }
     return sum;
 }
 
-int mulVec(shared_ptr<vector<int>> vec) {
-    int prod = 1;
+int64_t mulVec(shared_ptr<vector<int>> vec) {
+    int64_t prod = 1;
     for (unsigned long i = 0; i < vec->size(); i++) {
         prod *= vec->at(i);
     }
@@ -183,20 +183,35 @@ int mulVec(shared_ptr<vector<int>> vec) {
 }
 
 void part2() {
-    string NUMINPUT = "inputs/test-nums.txt";
-    string OPINPUT = "inputs/test-ops.txt";
+    string NUMINPUT = "inputs/nums.txt";
+    string OPINPUT = "inputs/ops.txt";
     sharedStackPtr ops = loadOps(&OPINPUT); 
     shared_ptr<vector<sharedStackPtr>> banks = loadBanks(&NUMINPUT);
 
     int64_t total = 0;
     shared_ptr<vector<int>> vec = termVec(banks);
     while (!vec->empty()) {
-        printVec(vec);
+        char c = ops->top();
+        ops->pop();
+        // printVec(vec);
+        // cout << c << ' ';
+        int64_t result = 0;
+        switch (c) {
+            case '*':
+                result = mulVec(vec);
+                break;
+            case '+':
+                result = sumVec(vec);
+                break;
+        }
+        total += result;
+        // cout << result << '\n';
         vec = termVec(banks);
     }
     cout << "PART 2: " << total << '\n';
 }
 int main() {
-    part1(); // PART 1: 7098065460541
-    part2();
+    part1();    // PART 1: 7098065460541
+    part2();    // PART 2: 20306810458 TOO LOW
+                // PART 2: 13807151830618 (int overflow: used int instead of int64_t for prod)
 }    
