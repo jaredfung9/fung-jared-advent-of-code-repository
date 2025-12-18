@@ -7,3 +7,6 @@ Then, build a matrix and transpose it.
 
 ## Straightforward Solution - Space Inefficient
 * Let's try to just read EVERYTHING into memory. (Aside: if the dataset was larger than memory, I would then attempt to convert the dataset into matrix blocks and then perform matrix transposition to rearrange the inputs into rows that are easily accessible individually.
+
+## Minor analysis
+* We only have four rows, let's just read them into four vectors and iterate forward (if order doesn't matter, stack also works and we pop)
