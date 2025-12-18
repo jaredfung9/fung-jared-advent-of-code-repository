@@ -45,3 +45,4 @@ Order of accesses:
 * double adding last element? seems like EOF check is not working how I expected
 * maybe getline isn't reading in an EOF to the istringstream
 * needed to use (buffer_stream >> x) as the while condition
+* forgot the break statement in switch and cases...
