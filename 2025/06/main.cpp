@@ -10,8 +10,8 @@
 
 using std::cout, std::ifstream, std::vector, std::stack, std::string, std::istringstream, std::shared_ptr;
 
-string NUMINPUT = "inputs/test-nums.txt";
-string OPINPUT = "inputs/test-ops.txt";
+string NUMINPUT = "inputs/nums.txt";
+string OPINPUT = "inputs/ops.txt";
 
 shared_ptr<stack<char>> loadOps(string* filename) {
     ifstream FILE;
@@ -22,7 +22,7 @@ shared_ptr<stack<char>> loadOps(string* filename) {
     auto _stack = std::make_shared<stack<char>>();
     char x;
     while (buffer_stream >> x) {
-        cout << x << ' ';
+        // cout << x << ' ';
         _stack->push(x);
     }
     FILE.close();
@@ -34,10 +34,8 @@ shared_ptr<stack<int>> loadMemoryRow(string* input_row) {
     auto _stack = std::make_shared<stack<int>>();
     int x;
     while (buffer_stream >> x) {
-        cout << x << ' ';
         _stack->push(x);
     }
-    cout << '\n';
     return _stack;
 }
 
@@ -73,7 +71,7 @@ int64_t mulBanks(vector<shared_ptr<stack<int>>>* banks) {
 }
 void part1() {
     shared_ptr<stack<char>> ops = loadOps(&OPINPUT);
-    cout << "Loaded Ops: " << ops->size() << '\n';
+    // cout << "Loaded Ops: " << ops->size() << '\n';
     
     // Load in num banks
     ifstream FILE;
@@ -85,10 +83,10 @@ void part1() {
         banks.push_back(loadMemoryRow(&buffer));
     }
     FILE.close();
-    for (unsigned int i = 0; i < banks.size(); i++) {
-        cout << banks[i]->size() << '\n';
-    }
-    cout << ops->size() << '\n';
+    // for (unsigned int i = 0; i < banks.size(); i++) {
+    //     cout << banks[i]->size() << '\n';
+    // }
+    // cout << ops->size() << '\n';
     int64_t total = 0;
     int64_t calc = 0;
     while (!ops->empty()) {
@@ -102,12 +100,12 @@ void part1() {
                 break;
         }
         total += calc;
-        cout << calc << '\n';
-        cout.flush();
+        // cout << calc << '\n';
+        // cout.flush();
     }
     cout << "PART 1: " << total << '\n';
 }
 
 int main() {
-    part1();
+    part1(); // PART 1: 7098065460541
 }    
