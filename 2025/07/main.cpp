@@ -3,7 +3,6 @@
 
 #include <string>
 
-// Returns '1' iff a&b
 char AND(char a, char b) {
     return ((a == '1') && (b == '1')) ? '1' : '0';
 }
@@ -15,6 +14,8 @@ char OR(char a, char b) {
 char XOR(char a, char b) {
     return (((a == '1') || (b == '1'))&&(a != b)) ? '1' : '0';
 }
+
+
 int main() {
     std::ifstream FILE;
     FILE.open("inputs/demo.txt");
