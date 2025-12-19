@@ -42,3 +42,23 @@ string collisions(string next_row) // Given
 public:
 void printCurrentBeam();
 int update(); // Returns -1 if EOF, otherwise calculates the next row of beams.
+
+# PART 2
+* Quantum-multiverse time
+* include a beams vector containing every possible beam location at each update.
+* New Function: quantumUpdate(); similar logic, but we run the collision check for every string in the beam vector. If a collision occurs, we remove that beam string and add two different strings with the "split" timeline. Otherwise, it is added back into the beam vector.
+* The answer to part 2 will be the number of elements (timelines) in our beam vector after we process the entire file.
+
+
+## Quantum Update
+if EOF, return -1  
+Beam Vector := vector of ints, if an int is in the list, indicates the existence of a timeline with a particle in that location. There may be "duplicate" positions at any given time.  
+
+Read in nextRows string  
+vector<int> updates  contains a vector of ints of the next  
+For all ints in beam vector:  
+check if splitter[i] has a splitter:  
+if it does: push (i-1) and (i+1) to updates, check if they are in range  
+otherwise, push i to updates  
+
+copy updates into beam vector  return 0

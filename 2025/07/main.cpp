@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <bitset>
 // char AND(char a, char b) {
 //     return ((a == '1') && (b == '1')) ? '1' : '0';
@@ -14,12 +15,13 @@
 //     return (((a == '1') || (b == '1'))&&(a != b)) ? '1' : '0';
 // }
 
-using std::cout, std::ifstream, std::string;
+using std::cout, std::ifstream, std::string, std::vector;
 
 class Manifold {
     string beams;
     ifstream FILE;
     int splits;
+    vector<int> beam_vector;
     /* Returns a string representing the positions where a beam from BEAMS collided with a splitter in the NEXTROW. 
     Returns NULL upon failure to compare the two rows. */
     string calculateCollisions(string nextRow) {
@@ -62,6 +64,11 @@ class Manifold {
         FILE.open(filename);
         FILE >> beams;
         splits = 0;
+        for (int i = 0; i < (int) beams.length(); i++) {
+            if (beams[i] == '1') {
+                beam_vector.push_back(i);
+            }
+        }
     }
     ~Manifold() {
         FILE.close();
@@ -86,13 +93,32 @@ class Manifold {
         // printBeams();
         return 0;
     }
+
+    /* Checks for collisions for every beam in beam vector, removing and adding the appropriate splits to beam vector as needed. */
+    int quantumUpdate() {
+        if (FILE.eof()) {
+            return -1;
+        }
+        string nextRow;
+        FILE >> nextRow;
+
+        return 0;
+    }
 };
+
 void part1() {
     cout << "PART 1: ";
     Manifold model("inputs/input.txt");
     while (model.update() == 0);
     cout << model.getSplits() << "\n";
 }
+
+void part2() {
+    cout << "PART 2: ";
+    Manifold model("inputs/demo.txt");
+    cout << '\n';
+}
 int main() {
     part1();    // PART 1: 1717
+    part2();
 }
