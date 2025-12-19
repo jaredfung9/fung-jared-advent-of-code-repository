@@ -101,8 +101,26 @@ class Manifold {
         }
         string nextRow;
         FILE >> nextRow;
-
+        vector<int> updates;
+        for (int i = 0; i < (int) beam_vector.size(); i++) {
+            int particle = beam_vector[i];
+            if (nextRow[particle] == '1') {
+                // Collision!
+                int left = particle-1;
+                int right = particle+1;
+                updates.push_back(left);
+                updates.push_back(right);
+            } else {
+                // Particle continues onward.
+                updates.push_back(beam_vector[i]);
+            }
+        }
+        beam_vector = updates;
         return 0;
+    }
+    /* Returns the number of current timelines. */
+    int getTimelines() {
+        return beam_vector.size();
     }
 };
 
@@ -116,7 +134,8 @@ void part1() {
 void part2() {
     cout << "PART 2: ";
     Manifold model("inputs/demo.txt");
-    cout << '\n';
+    while (model.quantumUpdate() == 0);
+    cout << model.getTimelines() << '\n';
 }
 int main() {
     part1();    // PART 1: 1717
