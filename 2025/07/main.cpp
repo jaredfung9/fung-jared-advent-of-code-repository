@@ -15,29 +15,24 @@
 // }
 
 using std::cout, std::ifstream, std::string;
-const int BIT_WIDTH = 64;
+
 class Manifold {
-    int width;
-    int64_t beams;
+    string beams;
     ifstream FILE;
     public:
-        Manifold(string filename) {
-            FILE.open(filename);
-            string buffer;
-            if (!FILE.eof()) {
-                FILE >> buffer;
-                width = buffer.size();
-                beams = std::stoi(buffer, nullptr, 2);
-            }
-        }
-        ~Manifold() {
-            FILE.close();
-        }
-
-        void printBeams() {
-            string s = std::bitset< 64 > (beams).to_string();
-        }
+    Manifold(string filename) {
+        FILE.open(filename);
+        FILE >> beams;
+    }
+    ~Manifold() {
+        FILE.close();
+    }
+    void printBeams() {
+        cout << beams << '\n';
+    }
 };
 int main() {
+    string input = "inputs/demo.txt";
     Manifold model("inputs/demo.txt");
+    model.printBeams();
 }

@@ -31,3 +31,14 @@ c:= a&b
 * After investigating the main input file, using the bitmask solution would require using an integer that has at least 141 bits.
 * Therefore, a bitset works better.
 * Might have to divide the set into individual int_blocks (from right to left).
+### Strings
+* At this point, it's better to just roll a quick custom class
+
+# Manifold class
+* string beams
+* ifstream input
+
+string collisions(string next_row) // Given 
+public:
+void printCurrentBeam();
+int update(); // Returns -1 if EOF, otherwise calculates the next row of beams.
