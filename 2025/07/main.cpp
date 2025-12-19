@@ -1,39 +1,43 @@
 #include <iostream>
 #include <fstream>
-
 #include <string>
+#include <bitset>
+// char AND(char a, char b) {
+//     return ((a == '1') && (b == '1')) ? '1' : '0';
+// }
 
-char AND(char a, char b) {
-    return ((a == '1') && (b == '1')) ? '1' : '0';
-}
+// char OR(char a, char b) {
+//     return ((a == '1') || (b == '1')) ? '1' : '0';
+// }
 
-char OR(char a, char b) {
-    return ((a == '1') || (b == '1')) ? '1' : '0';
-}
+// char XOR(char a, char b) {
+//     return (((a == '1') || (b == '1'))&&(a != b)) ? '1' : '0';
+// }
 
-char XOR(char a, char b) {
-    return (((a == '1') || (b == '1'))&&(a != b)) ? '1' : '0';
-}
+using std::cout, std::ifstream, std::string;
+const int BIT_WIDTH = 64;
+class Manifold {
+    int width;
+    int64_t beams;
+    ifstream FILE;
+    public:
+        Manifold(string filename) {
+            FILE.open(filename);
+            string buffer;
+            if (!FILE.eof()) {
+                FILE >> buffer;
+                width = buffer.size();
+                beams = std::stoi(buffer, nullptr, 2);
+            }
+        }
+        ~Manifold() {
+            FILE.close();
+        }
 
-
+        void printBeams() {
+            string s = std::bitset< 64 > (beams).to_string();
+        }
+};
 int main() {
-    std::ifstream FILE;
-    FILE.open("inputs/demo.txt");
-    std::string buffer;
-    FILE >> buffer;
-    std::cout << AND('1', '1');
-    std::cout << AND('1', '0');
-    std::cout << AND('0', '1');
-    std::cout << AND('0', '0');
-    std::cout <<'\n';
-    std::cout << OR('1', '1');
-    std::cout << OR('1', '0');
-    std::cout << OR('0', '1');
-    std::cout << OR('0', '0');
-    std::cout <<'\n';
-    std::cout << XOR('1', '1');
-    std::cout << XOR('1', '0');
-    std::cout << XOR('0', '1');
-    std::cout << XOR('0', '0');
-    FILE.close();
+    Manifold model("inputs/demo.txt");
 }
