@@ -121,22 +121,47 @@ class Manifold {
     // }
 };
 class QuantumManifold {
-    vector<vector<int>> mapping; // Row Major mapping[r][c] returns the number of timelines created if a particle hits/travels through the given tile.
+    vector<vector<int64_t>> mapping; // Row Major mapping[r][c] returns the number of timelines created if a particle hits/travels through the given tile.
+    int center;
     void generateMapping(string filename) {
         ifstream FILE;
         FILE.open(filename);
         
         stack<string> _stack;
         string buffer;
+        int count = 0;
         while (FILE >> buffer) {
             _stack.push(buffer);
+            count++;
         }
         
+        int cols = (int) buffer.size();
+        center = (cols-1) / 2;
+        /* Initialize our base row. */
+        vector<int64_t> ones(cols);
+        for (int i = 0; i < (int) ones.size(); i++) {
+            ones[i] = 1;
+        }
+        mapping.push_back(ones);
+
+        for (int i = 0; i < count-1; i++) {
+            vector<int64_t> row(cols);
+            mapping.push_back(row);
+        }
+        
+        _stack.pop(); // skip 0'd row
+        int r = 1;
         while (!_stack.empty()) {
             string out = _stack.top();
             _stack.pop();
-            vector<int> row(out.length());
-            mapping.push_back(row);
+            for (int c = 0; c < cols; c++) {
+                if (out[c] == '1') {
+                    mapping[r][c] = mapping[r-1][c-1] + mapping[r-1][c+1];
+                } else {
+                    mapping[r][c] = mapping[r-1][c];
+                }
+            }
+            r++;
         }
         FILE.close();
     }
@@ -145,12 +170,15 @@ class QuantumManifold {
             generateMapping(filename);
         }
         void printMap() {
-            for (int r = 0; r < (int) mapping.size(); r++) {
+            for (int r = (int) mapping.size() -1; r >= 0; r--) {
                 for (int c = 0; c < (int) mapping[r].size(); c++) {
                     cout << mapping[r][c] << '\t';
                 }
                 cout << '\n';
             }
+        }
+        void getTimelines() {
+            cout << mapping.back()[center] <<'\n';
         }
 };
 void part1() {
@@ -161,11 +189,16 @@ void part1() {
 }
 
 void part2() {
-    cout << "PART 2:\n";
-    QuantumManifold model("inputs/demo.txt");
-    model.printMap();
+    cout << "PART 2: ";
+    QuantumManifold model("inputs/input.txt");
+    model.getTimelines();
+    
 }
 int main() {
     part1();    // PART 1: 1717
-    part2();
+    part2();    // PART 2: 231507396180012
+    /* PART 2:
+    68991020 - TOO LOW
+    231507396180012 - problem was using int (integer overflow)
+    */
 }
