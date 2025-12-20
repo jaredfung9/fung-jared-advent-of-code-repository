@@ -22,6 +22,7 @@ class Manifold {
     ifstream FILE;
     int splits;
     vector<int> beam_vector;
+    int rowsProc;
     /* Returns a string representing the positions where a beam from BEAMS collided with a splitter in the NEXTROW. 
     Returns NULL upon failure to compare the two rows. */
     string calculateCollisions(string nextRow) {
@@ -64,6 +65,7 @@ class Manifold {
         FILE.open(filename);
         FILE >> beams;
         splits = 0;
+        rowsProc = 0;
         for (int i = 0; i < (int) beams.length(); i++) {
             if (beams[i] == '1') {
                 beam_vector.push_back(i);
@@ -112,10 +114,15 @@ class Manifold {
                 updates.push_back(right);
             } else {
                 // Particle continues onward.
-                updates.push_back(beam_vector[i]);
+                updates.push_back(particle);
             }
         }
         beam_vector = updates;
+        rowsProc++;
+        if (beam_vector.size() > 300000) {
+            cout << '\n' << rowsProc <<'\n';
+            return -1;
+        }
         return 0;
     }
     /* Returns the number of current timelines. */
@@ -133,7 +140,7 @@ void part1() {
 
 void part2() {
     cout << "PART 2: ";
-    Manifold model("inputs/demo.txt");
+    Manifold model("inputs/input.txt");
     while (model.quantumUpdate() == 0);
     cout << model.getTimelines() << '\n';
 }

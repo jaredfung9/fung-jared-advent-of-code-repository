@@ -62,3 +62,12 @@ if it does: push (i-1) and (i+1) to updates, check if they are in range
 otherwise, push i to updates  
 
 copy updates into beam vector  return 0
+* Input is too large, crashing system
+* vector of ints probably consuming too much ram
+## Too many timelines
+* Considering how to handle duplicates
+* checked Valgrind, no memory leaks
+* Maybe consider fully processing a single particle with a queue
+## Dynamic Programming
+* Maybe consider building a mapping that returns the number of timelines created from a given index and depth.
+* Bottom up: the number of timelines created at a specific spot must be equal to 2 + P(Left, down) + P(Right, down)
