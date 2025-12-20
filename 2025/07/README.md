@@ -71,3 +71,14 @@ copy updates into beam vector  return 0
 ## Dynamic Programming
 * Maybe consider building a mapping that returns the number of timelines created from a given index and depth.
 * Bottom up: the number of timelines created at a specific spot must be equal to 2 + P(Left, down) + P(Right, down)
+
+## Algorithm - Store intermediate calculations
+1. Read in strings, push to stack
+1. Pop from stack (ie reading from top to bottom)
+1. i := row_number
+1. c := col_num
+1. Let P(i, c) represent the number of timelines that are created if a particle hit this tile from above.
+
+### Calculating timelines
+1. If the (i, c) is a splitter, then it must be that P(i,c) = 2 + P(i-1,c-1) + P(i-1, c+1)
+1. Otherwise, P(i,c) = P(i-1,c)

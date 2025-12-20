@@ -96,39 +96,40 @@ class Manifold {
         return 0;
     }
 
+    // NO GO
     /* Checks for collisions for every beam in beam vector, removing and adding the appropriate splits to beam vector as needed. */
-    int quantumUpdate() {
-        if (FILE.eof()) {
-            return -1;
-        }
-        string nextRow;
-        FILE >> nextRow;
-        vector<int> updates;
-        for (int i = 0; i < (int) beam_vector.size(); i++) {
-            int particle = beam_vector[i];
-            if (nextRow[particle] == '1') {
-                // Collision!
-                int left = particle-1;
-                int right = particle+1;
-                updates.push_back(left);
-                updates.push_back(right);
-            } else {
-                // Particle continues onward.
-                updates.push_back(particle);
-            }
-        }
-        beam_vector = updates;
-        rowsProc++;
-        if (beam_vector.size() > 300000) {
-            cout << '\n' << rowsProc <<'\n';
-            return -1;
-        }
-        return 0;
-    }
-    /* Returns the number of current timelines. */
-    int getTimelines() {
-        return beam_vector.size();
-    }
+    // int quantumUpdate() {
+    //     if (FILE.eof()) {
+    //         return -1;
+    //     }
+    //     string nextRow;
+    //     FILE >> nextRow;
+    //     vector<int> updates;
+    //     for (int i = 0; i < (int) beam_vector.size(); i++) {
+    //         int particle = beam_vector[i];
+    //         if (nextRow[particle] == '1') {
+    //             // Collision!
+    //             int left = particle-1;
+    //             int right = particle+1;
+    //             updates.push_back(left);
+    //             updates.push_back(right);
+    //         } else {
+    //             // Particle continues onward.
+    //             updates.push_back(particle);
+    //         }
+    //     }
+    //     beam_vector = updates;
+    //     rowsProc++;
+    //     if (beam_vector.size() > 300000) {
+    //         cout << '\n' << rowsProc <<'\n';
+    //         return -1;
+    //     }
+    //     return 0;
+    // }
+    // /* Returns the number of current timelines. */
+    // int getTimelines() {
+    //     return beam_vector.size();
+    // }
 };
 
 void part1() {
@@ -140,9 +141,7 @@ void part1() {
 
 void part2() {
     cout << "PART 2: ";
-    Manifold model("inputs/input.txt");
-    while (model.quantumUpdate() == 0);
-    cout << model.getTimelines() << '\n';
+    
 }
 int main() {
     part1();    // PART 1: 1717
