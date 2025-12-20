@@ -1,1 +1,2 @@
 sed -i 's/,/ /g' inputs/demo.txt
+sed -i 's/,/ /g' inputs/input.txt
