@@ -157,5 +157,6 @@ void Part1(string filename, uint links) {
 
 }
 int main() {
-    Part1("inputs/input.txt", 1000);
+    Part1("inputs/input.txt", 1000);    // Part 1: 153328
+    
 }
