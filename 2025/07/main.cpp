@@ -2,20 +2,9 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <bitset>
-// char AND(char a, char b) {
-//     return ((a == '1') && (b == '1')) ? '1' : '0';
-// }
+#include <stack>
 
-// char OR(char a, char b) {
-//     return ((a == '1') || (b == '1')) ? '1' : '0';
-// }
-
-// char XOR(char a, char b) {
-//     return (((a == '1') || (b == '1'))&&(a != b)) ? '1' : '0';
-// }
-
-using std::cout, std::ifstream, std::string, std::vector;
+using std::cout, std::ifstream, std::string, std::vector, std::stack;
 
 class Manifold {
     string beams;
@@ -131,7 +120,39 @@ class Manifold {
     //     return beam_vector.size();
     // }
 };
-
+class QuantumManifold {
+    vector<vector<int>> mapping; // Row Major mapping[r][c] returns the number of timelines created if a particle hits/travels through the given tile.
+    void generateMapping(string filename) {
+        ifstream FILE;
+        FILE.open(filename);
+        
+        stack<string> _stack;
+        string buffer;
+        while (FILE >> buffer) {
+            _stack.push(buffer);
+        }
+        
+        while (!_stack.empty()) {
+            string out = _stack.top();
+            _stack.pop();
+            vector<int> row(out.length());
+            mapping.push_back(row);
+        }
+        FILE.close();
+    }
+    public:
+        QuantumManifold(string filename) {
+            generateMapping(filename);
+        }
+        void printMap() {
+            for (int r = 0; r < (int) mapping.size(); r++) {
+                for (int c = 0; c < (int) mapping[r].size(); c++) {
+                    cout << mapping[r][c] << '\t';
+                }
+                cout << '\n';
+            }
+        }
+};
 void part1() {
     cout << "PART 1: ";
     Manifold model("inputs/input.txt");
@@ -140,8 +161,9 @@ void part1() {
 }
 
 void part2() {
-    cout << "PART 2: ";
-    
+    cout << "PART 2:\n";
+    QuantumManifold model("inputs/demo.txt");
+    model.printMap();
 }
 int main() {
     part1();    // PART 1: 1717
