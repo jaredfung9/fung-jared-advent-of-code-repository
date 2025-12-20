@@ -10,10 +10,10 @@ struct Point {
 bool intMax(int64_t a, int64_t b) {
     return a > b;
 }
-int main() {
+void part1() {
     // Part 1:
     ifstream file;
-    file.open("inputs/demo.txt");
+    file.open("inputs/input.txt");
     vector<Point> points;
     int64_t _x, _y;
     while (file >> _x >> _y) {
@@ -39,5 +39,8 @@ int main() {
         }
     }
     std::sort(areas.begin(), areas.end(), &intMax);
-    printf("PART 1: %ld\n", areas[0]);
+    printf("PART 1: %ld\n", areas[0]); // 4715966250
+}
+int main() {
+    part1(); // 4715966250
 }
