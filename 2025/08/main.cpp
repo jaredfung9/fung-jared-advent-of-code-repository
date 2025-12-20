@@ -4,7 +4,8 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
-using std::cout, std::vector, std::string, std::ifstream;
+#include <unordered_map>
+using std::cout, std::vector, std::string, std::ifstream, std::unordered_map;
 
 class Point {
     int x, y, z;
@@ -32,9 +33,20 @@ struct Path {
 bool compPath(Path* a, Path* b) {
     return a->distance < b->distance;
 }
+bool compMax(int x, int y) {
+    return x > y;
+}
 class Circuits{
     vector<int> groupings;
     int id;
+
+    /* Iterates through groupings, replacing any values equal to targetG with newG */
+    void linkGroups(int targetG, int newG) {
+        for (uint i = 0; i < groupings.size(); i++) {
+            if (groupings[i] == targetG) { groupings[i] = newG; }
+        }
+    }
+
     public:
     Circuits(uint points) {
         id = 0;
@@ -45,9 +57,65 @@ class Circuits{
             printf("%i %d\n", i, groupings[i]);
         }
     }
+
+    /* Given two ids, places both ids in the same group, using the smallest id of the two. */
+    void combinePts(int id1, int id2) {
+        int g1 = groupings[id1];
+        int g2 = groupings[id2];
+        if ((g1 == -1) && (g2 == -1)) { 
+            // Neither point is in a group; assign a new group_id
+            groupings[id1] = id;
+            groupings[id2] = id;
+            id++;
+            return;
+        } 
+        if (g1 == -1) {
+            groupings[id1] = g2;
+            return;
+        }
+        if (g2 == -1) {
+            groupings[id2] = g1;
+            return;
+        }
+        else {
+            // Both points are in a group, need to connect two groups
+            int smallest = std::min(g1, g2);
+            int largest = std::max(g1, g2);
+            linkGroups(smallest, largest);
+        }
+    }
+
+    /* Returns a vector containing the three largest integers */
+    vector<int> largestCircuits() {
+        unordered_map<int, int> map;
+        for (uint i = 0; i < groupings.size(); i++) {
+            if (groupings[i] != -1) {
+                if (map.find(groupings[i]) == map.end()) {
+                    map[groupings[i]] = 1;
+                }
+                else {
+                    map[groupings[i]]++;
+                }
+            }
+        }
+        vector<int> buffer;
+        for (auto iter = map.begin(); iter != map.end(); iter++) {
+            buffer.push_back(iter->second);
+        }
+        std::sort(buffer.begin(), buffer.end(), &compMax);
+
+        // for (auto iter = buffer.begin(); iter != buffer.end(); iter++) {
+        //     printf("%i\n", (*iter));
+        // }
+        vector<int> largest;
+        for (int i = 0; i < 3; i++) {
+            largest.push_back(buffer[i]);
+        }
+        return largest;
+    }
 };
-void Part1() {
-    string filename = "inputs/demo.txt";
+
+void Part1(string filename, uint links) {
     ifstream file;
     file.open(filename);
     vector<Point*> points;
@@ -71,8 +139,23 @@ void Part1() {
 
     std::sort(paths.begin(),paths.end(), &compPath);
     Circuits circuits(points.size());
-    circuits.checkGrouping();
+    
+    for (uint i = 0; i < links; i++) {
+        int id1, id2;
+        id1 = paths[i]->id1;
+        id2 = paths[i]->id2;
+        circuits.combinePts(id1, id2);
+    }
+    
+    vector<int> largest = circuits.largestCircuits();
+    int prod = 1;
+    for(uint i = 0; i < largest.size(); i++) {
+        // printf("%i\n", largest[i]);
+        prod *= largest[i];
+    }
+    printf("PART 1: %i\n", prod);
+
 }
 int main() {
-    Part1();
+    Part1("inputs/input.txt", 1000);
 }
