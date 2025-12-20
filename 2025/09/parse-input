@@ -1,0 +1,2 @@
+sed 's/,/ /g' -i inputs/demo.txt
+sed 's/,/ /g' -i inputs/input.txt
