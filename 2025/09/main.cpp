@@ -74,9 +74,12 @@ Valid Area:
 (0,2) (5,0)
 
 Corners
+(x1,y1) (x2, y2) -> (x1,y2) (x2,y1)
 [(0,2) (3,4)] (0,4) (3,2) <- calculate other corners
 [(0,2) (5,0)] (0,0) (5,2)
 check if each corner is in range
+
+Is it okay to return validCols | validRows or do we need both Cols and Rows to be valid?
 
 */
 // void big() {
