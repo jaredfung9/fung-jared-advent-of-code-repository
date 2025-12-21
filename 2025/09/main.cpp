@@ -1,8 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <unordered_map>
 #include <algorithm>
-using std::cout, std::ifstream, std::vector, std::abs;
+using std::cout, std::ifstream, std::vector, std::abs, std::unordered_map;
 
 struct Point {
     int64_t x, y;
@@ -29,7 +30,6 @@ void part1() {
     for (uint i = 0; i < points.size(); i++) {
         for (uint j = i+1; j < points.size(); j++) {
             Point p1 = points[i];
-            
             Point p2 = points[j];
             // printf("Point 1: %ld %ld\n", p1.x, p1.y);
             // printf("Point 2: %ld %ld\n", p2.x, p2.y);
@@ -80,40 +80,30 @@ Corners
 check if each corner is in range
 
 Is it okay to return validCols | validRows or do we need both Cols and Rows to be valid?
-
+A valid area will pass at least one range check.
+An invalid area is unable to pass any test because it neither has a valid row or col.
 */
-// void big() {
-//     const int n = 100000;
-//     vector<vector<bool>>rows;
-//     for (int i = 0; i < n; i++) {
-//         vector<bool> row(n, true);
-//         rows.push_back(row);
-//     }
-//     if (rows[96759][38236]) {
-//         printf("finished");
-//     }
-// }
 
-bool compPoint(Point a, Point b) {
-    return a.x < b.x;
+/* Contains a set of valid row and col ranges.
+Can be used to check if a corner is in range. */
+// class Ranges {
+// };
+vector<Point> genCorners(Point a, Point b) {
+    vector<Point> corners{a, b};
+    corners.push_back(Point{a.x, b.y});
+    corners.push_back(Point{b.x, a.y});
+    return corners;
 }
-void checkPoints() {
-    ifstream file;
-    file.open("inputs/input.txt");
-    vector<Point> points;
-    int64_t _x, _y;
-    while (file >> _x >> _y) {
-        points.push_back(Point{_x, _y});
-    }
-    file.close();
-    std::sort(points.begin(), points.end(), &compPoint);
-    for (auto iter = points.begin(); iter != points.end(); iter++) {
-        printf("%ld\n", iter->x);
+
+void part2() {
+    Point a{0,2};
+    Point b{5,0};
+    vector<Point> corners = genCorners(a, b);
+    for (auto iter = corners.begin(); iter != corners.end(); iter++) {
+        printf("%ld %ld\n", iter->x, iter->y);
     }
 }
 int main() {
-    part1(); // 4715966250
-    // checkPoints();
-    // big();
-    
+    part1(); // 4715966250 
+    part2();
 }
