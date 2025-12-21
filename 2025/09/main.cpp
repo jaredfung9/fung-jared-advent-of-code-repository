@@ -45,7 +45,40 @@ void part1() {
 /* Brainstorm: It is possible to initialize a 100000x100000 bool map to indicate if a tile is valid. 
 Input list walks us around the perimeter. Maybe we can identify valid ranges for each row and column. 
 Leverage the fact that each line indicates a move (we only move by a column or row) to identify the min and max of each row and column.
-It seems like each row and column has a pair of points.*/
+It seems like each row and column has a pair of points.
+consider the following case study:
+
+        ...#X#
+        ...X.X
+        #XX#.X
+        X....X
+ (0,0)->#XXXX#
+
+Points:
+(0,0)
+(5,0)
+(5,4)
+(3,4)
+(3,2)
+(0,2)
+
+Ranges  
+Col         Row
+0 : 0,2     0 : 0,5
+5 : 0,4     4 : 3,5
+3 : 2,4     2 : 0,3
+
+Invalid Area:
+(0,2) (3,4)
+Valid Area:
+(0,2) (5,0)
+
+Corners
+[(0,2) (3,4)] (0,4) (3,2) <- calculate other corners
+[(0,2) (5,0)] (0,0) (5,2)
+check if each corner is in range
+
+*/
 // void big() {
 //     const int n = 100000;
 //     vector<vector<bool>>rows;
