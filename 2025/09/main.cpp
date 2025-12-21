@@ -115,7 +115,9 @@ class RangeChecker {
         Range range = rowRanges[p.y];
         return ((p.y >= range.min) && (p.y <= range.max));
     }
-
+    bool validCorner(Point p) {
+        return (validCol(p) || validRow(p));
+    }
     public:
     RangeChecker(string filename) {
         ifstream file;
@@ -136,7 +138,7 @@ class RangeChecker {
             rowRanges[row] = Range{_min, _max};
             // printf("%ld : %ld %ld\n", row, _min, _max);
         }
-        cout << '\n';
+        
         // Build Col Range
         std::sort(points.begin(), points.end(), &minCol);  
         for (uint i = 0; i+1 <points.size(); i += 2) {
@@ -147,22 +149,46 @@ class RangeChecker {
             // printf("%ld : %ld %ld\n", row, _min, _max);
         }
     }
-    bool validCorner(Point p) {
-        return (validCol(p) || validRow(p));
+    bool validArea(vector<Point> points) {
+        for (auto iter = points.begin(); iter != points.end(); iter++) {
+            if (!validCorner(*iter)) {
+                return false;
+            }
+        }
+        return true;
     }
+
 };
 
 void part2() {
-    Point a{7,1};
-    Point b{2,3};
-    vector<Point> corners = genCorners(a, b);
-    
-    RangeChecker ranges("inputs/demo.txt");
-    
-    for (auto iter = corners.begin(); iter != corners.end(); iter++) {
-        printf("(%ld %ld): ", iter->x, iter->y);
-        cout << ranges.validCorner(*iter) << '\n';
+    string input = "inputs/demo.txt";
+
+    ifstream file;
+    file.open(input);
+    vector<Point> points;
+    int64_t _x, _y;
+    while (file >> _x >> _y) {
+        points.push_back(Point{_x, _y});
     }
+    file.close();
+    RangeChecker ranges(input);
+
+    vector<int64_t> areas;
+    for (uint i = 0; i < points.size(); i++) {
+        for (uint j = i+1; j < points.size(); j++) {
+            Point p1 = points[i];
+            Point p2 = points[j];
+            // printf("Point 1: %ld %ld\n", p1.x, p1.y);
+            // printf("Point 2: %ld %ld\n", p2.x, p2.y);
+            if(ranges.validArea(genCorners(p1, p2))) {
+                int64_t area = (abs(p1.x - p2.x)+1) * (abs(p1.y - p2.y)+1);
+                areas.push_back(area);
+                // printf("%ld\n", area);
+            }
+        }
+    }
+    std::sort(areas.begin(), areas.end(), &intMax);
+    printf("PART 2: %ld\n", areas[0]);
 }
 int main() {
     part1(); // 4715966250 
