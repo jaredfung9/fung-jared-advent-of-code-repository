@@ -3,7 +3,8 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
-using std::cout, std::ifstream, std::vector, std::abs, std::unordered_map;
+#include <string>
+using std::cout, std::ifstream, std::vector, std::abs, std::unordered_map, std::string;
 
 struct Point {
     int64_t x, y;
@@ -95,12 +96,72 @@ vector<Point> genCorners(Point a, Point b) {
     return corners;
 }
 
+struct Range {
+    int64_t min, max;
+};
+bool minRow(Point a, Point b) { return a.y < b.y; } 
+bool minCol(Point a, Point b) { return a.x < b.x; } // Sort functions for Points
+
+class RangeChecker {
+    unordered_map<int64_t, Range> rowRanges;
+    unordered_map<int64_t, Range> colRanges;
+    /* Check if a given point's x coordinate is in a valid range.*/
+    bool validCol(Point p) {
+        Range range = colRanges[p.x];
+        return ((p.x >= range.min) && (p.x <= range.max));
+    }
+    /* Check if a given point's y coordinate is in a valid range.*/
+    bool validRow(Point p) {
+        Range range = rowRanges[p.y];
+        return ((p.y >= range.min) && (p.y <= range.max));
+    }
+
+    public:
+    RangeChecker(string filename) {
+        ifstream file;
+        file.open(filename);
+        vector<Point> points;
+        int64_t _x, _y;
+        while (file >> _x >> _y) {
+            points.push_back(Point{_x, _y});
+        }
+        file.close();
+        // Build Row Range
+        std::sort(points.begin(), points.end(), &minRow);  
+        int64_t _min, _max;
+        for (uint i = 0; i+1 <points.size(); i += 2) {
+            int64_t row = points[i].y;
+            _min = std::min(points[i].x, points[i+1].x);
+            _max = std::max(points[i].x, points[i+1].x);
+            rowRanges[row] = Range{_min, _max};
+            // printf("%ld : %ld %ld\n", row, _min, _max);
+        }
+        cout << '\n';
+        // Build Col Range
+        std::sort(points.begin(), points.end(), &minCol);  
+        for (uint i = 0; i+1 <points.size(); i += 2) {
+            int64_t col = points[i].x;
+            _min = std::min(points[i].y, points[i+1].y);
+            _max = std::max(points[i].y, points[i+1].y);
+            colRanges[col] = Range{_min, _max};
+            // printf("%ld : %ld %ld\n", row, _min, _max);
+        }
+    }
+    bool validCorner(Point p) {
+        return (validCol(p) || validRow(p));
+    }
+};
+
 void part2() {
-    Point a{0,2};
-    Point b{5,0};
+    Point a{7,1};
+    Point b{2,3};
     vector<Point> corners = genCorners(a, b);
+    
+    RangeChecker ranges("inputs/demo.txt");
+    
     for (auto iter = corners.begin(); iter != corners.end(); iter++) {
-        printf("%ld %ld\n", iter->x, iter->y);
+        printf("(%ld %ld): ", iter->x, iter->y);
+        cout << ranges.validCorner(*iter) << '\n';
     }
 }
 int main() {
