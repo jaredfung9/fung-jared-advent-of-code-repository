@@ -13,4 +13,4 @@
 ### 2025 
 * C++, make
 * sed
-
+* Day 9 was fun! Learned about *Coordinate Compression* (also got to build an image which is always fun)
