@@ -226,7 +226,7 @@ void part2() {
     }
     compressedPoints.pop_back();
 
-    // PRINT Perimeter map
+    //PRINT Perimeter map
     // for (int r = 0; r < M; r++) {
     //     for (int c = 0; c < M; c++) {
     //         if (periMap.get(r, c)) {
