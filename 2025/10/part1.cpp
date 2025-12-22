@@ -2,7 +2,9 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-using std::cout, std::string, std::ifstream, std::stringstream;
+#include <vector>
+#include <stack>
+using std::cout, std::string, std::ifstream, std::stringstream, std::stack, std::vector;
 
 /*  Cleans token for processing.
     [.##.] -> .##.
@@ -48,21 +50,63 @@ int processToken(string token) {
     }
     return val;
 }
+class Machine {
+    vector<int> buttons;
+    int initial_state;
+    public:
+    Machine() {
+        initial_state=0;
+    }
+    void setInit(int init) {
+        initial_state = init;
+    }
+    void addButton(int button) {
+        buttons.push_back(button);
+    }
+    int initialState() {
+        return initial_state;
+    }
+    vector<int> retrieveButtons() {
+        return buttons;
+    }
+    void printState() {
+        printf("MACHINE INIT: %d BUTTONS: ", initial_state);
+        for (int i = 0; i < (int) buttons.size(); i++) {
+            printf("%d ", buttons[i]);
+        }
+        printf("\n");
+    }
+};
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         cout << "Please include a file\n";
         return -1;
     }
-    cout << argv[0] << ' ' << argv[1] << '\n';
     ifstream file;
     file.open(argv[1]);
     string token;
     char c;
-    int x;
+    vector<Machine> machines;
+    Machine machine;    // Sentinel Node
     while (file>>token) { 
         c = token[0];
-        x = processToken(token);
-        cout << c << ' ' << x << '\n';
+        switch(c) {
+            case '[':
+                machines.push_back(machine);
+                machine = Machine();
+                machine.setInit(processToken(token));
+                break;
+            case '(':
+                machine.addButton(processToken(token));
+                break;
+            case '{':
+                break;
+        }
+    }
+    machines.push_back(machine); // Make sure to add the final machine
+    machines.erase(machines.begin()); // Erase the sentinel node
+    for (auto iter = machines.begin(); iter != machines.end(); iter++) {
+        iter->printState();
     }
     file.close();
 }
