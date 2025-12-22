@@ -10,6 +10,10 @@ using std::cout, std::ifstream, std::vector, std::abs, std::unordered_map, std::
 struct Point {
     int64_t x, y;
 };
+bool sortByRow(Point a, Point b) { return a.y < b.y; }
+
+bool sortByCol(Point a, Point b) { return a.x < b.x; }
+
 bool compPoint(Point a, Point b) {
     return a.x < b.x;
 }
@@ -164,9 +168,56 @@ class RangeChecker {
 
 };
 
+class CompressedMapping {
+    unordered_map<int, int> CompressedRows; // ORIGINAL -> COMPRESSED
+    unordered_map<int, int> CompressedCols;
+    unordered_map<int, int> OriginalRows;
+    unordered_map<int, int> OriginalCols; // COMPRESSED -> ORIGINAL
+    int m;
+    public:
+    CompressedMapping(string filename) {
+        ifstream file;
+        file.open(filename);
+        vector<Point> points;
+        int x,y;
+        while (file >> x >> y) {
+            points.push_back(Point{x,y});
+        }
+        file.close();
+        // Build Compressed Rows
+        std::sort(points.begin(), points.end(), sortByRow);
+        int i = 1;
+        for (auto iter = points.begin(); iter != points.end(); iter++) {
+            int row = iter->y;
+            if (CompressedRows[row] == 0) { // Ignore duplicates
+                CompressedRows[row] = i;
+                OriginalRows[i] = row;
+                i += 2;
+            }
+        }
+        // Build Compressed Cols
+        std::sort(points.begin(), points.end(), sortByCol);
+        i = 1;
+        for (auto iter = points.begin(); iter != points.end(); iter++) {
+            int col = iter->x;
+            if (CompressedCols[col] == 0) {
+                CompressedCols[col] = i;
+                OriginalCols[i] = col;
+                i += 2;
+            }
+        }
+        m = i + 1; // Insert Buffer Space
+    }
+    int compressedRow(int originalRow) { return CompressedRows[originalRow]; }
+    int compressedCol(int originalCol) { return CompressedCols[originalCol]; }
+    Point compressedPoint(Point p) {
+        return Point{compressedCol(p.x), compressedRow(p.y)};
+    }
+    int getM() { return m; }
+};
 void part2() {
     string input = "inputs/input.txt";
-
+    printf("PART 2:\n");
     ifstream file;
     file.open(input);
     vector<Point> points;
@@ -175,38 +226,11 @@ void part2() {
         points.push_back(Point{_x, _y});
     }
     file.close();
-    RangeChecker ranges(input);
-
-    vector<int64_t> areas;
-    for (uint i = 0; i < points.size(); i++) {
-        for (uint j = i+1; j < points.size(); j++) {
-            Point p1 = points[i];
-            Point p2 = points[j];
-            // printf("Point 1: %ld %ld\n", p1.x, p1.y);
-            // printf("Point 2: %ld %ld\n", p2.x, p2.y);
-            if(ranges.validArea(genCorners(p1, p2))) {
-                int64_t area = (abs(p1.x - p2.x)+1) * (abs(p1.y - p2.y)+1);
-                areas.push_back(area);
-                // printf("(%ld,%ld) (%ld,%ld) %ld\n", p1.x, p1.y, p2.x, p2.y, area);
-            }
-        }
-    }
-    std::sort(areas.begin(), areas.end(), &intMax);
-    // for (auto iter = areas.begin(); iter != areas.end(); iter++) {
-    //     printf("%ld\n", *iter);
+    CompressedMapping compMap = CompressedMapping(input);
+    // std::sort(points.begin(), points.end(), &sortByCol);
+    // for (auto iter = points.begin(); iter != points.end(); iter++) {
+    //     printf("%d %d\n", (int) iter->x, compMap.compressedCol(iter->x));
     // }
-    printf("PART 2: %ld\n", areas[0]);
-    std::sort(points.begin(), points.end(), &compPoint);
-    vector<int64_t> xCoords;
-    for (auto iter = points.begin(); iter!= points.end(); iter += 2) {
-        xCoords.push_back(iter->x);
-    }
-    int id = 0;
-    for (auto iter = xCoords.begin(); iter != xCoords.end(); iter++) {
-        printf("%d %ld\n", id , *iter);
-        id++;
-    }
-
 }
 int main() {
     part1(); // 4715966250 
