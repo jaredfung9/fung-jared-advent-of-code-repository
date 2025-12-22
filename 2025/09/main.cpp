@@ -116,6 +116,18 @@ class CompressedMapping {
     int getM() { return m; }
 };
 
+class BoolMap {
+    vector<vector<bool>> map;
+    public:
+    BoolMap(int m) {
+        for (int i = 0; i < m; i++) {
+            map.push_back(vector<bool>(m));
+        }
+    }
+    bool get(int r, int c) { return map[r][c]; }
+    void set(int r, int c, bool val) { map[r][c] = val; }
+};
+
 void part2() {
     string input = "inputs/demo.txt";
     printf("PART 2:\n");
@@ -134,12 +146,14 @@ void part2() {
         compressedPoints.push_back(compMap.compressedPoint(*iter));
     }
     int M = compMap.getM();
-    bool periMap[M][M]; // Initialize perimeter map; Row Major (x,y) = [y][x]
+    BoolMap periMap(M);
+    // Initialize perimeter map; Row Major (x,y) = [y][x]
     for (int r = 0; r < M; r++) {
         for (int c = 0; c < M; c++) {
-            periMap[r][c] = 0;
+            periMap.set(r, c, 0);
         }
     }
+
     compressedPoints.push_back(compressedPoints[0]);
     Point prev = compressedPoints[0];
     Point curr;
@@ -152,7 +166,7 @@ void part2() {
             MAX = std::max(prev.y, curr.y);
             // printf("MOVING VERTICALLY %ld %ld -> %ld %ld FROM %d -> %d\n", prev.x, prev.y, curr.x, curr.y, MIN, MAX);
             for (int ROW = MIN; ROW <= MAX; ROW++) {
-                periMap[ROW][prev.x] = 1;
+                periMap.set(ROW, prev.x, 1);
             }
         }
         else if (prev.y == curr.y) {
@@ -161,7 +175,7 @@ void part2() {
             MAX = std::max(prev.x, curr.x);
             // printf("MOVING HORIZONTALLY %ld %ld -> %ld %ld FROM %d -> %d\n", prev.x, prev.y, curr.x, curr.y, MIN, MAX);
             for (int COL = MIN; COL <= MAX; COL++) {
-                periMap[prev.y][COL] = 1;
+                periMap.set(prev.y, COL, 1);
             }
         }
         else {
@@ -173,7 +187,7 @@ void part2() {
     // PRINT PERIMETER MAP
     for (int r = 0; r < M; r++) {
         for (int c = 0; c < M; c++) {
-            if (periMap[r][c]) {
+            if (periMap.get(r, c)) {
                 cout << '#';
             }
             else {
@@ -184,16 +198,16 @@ void part2() {
     }
 
     // BFS
-    bool visited[M][M];
+    BoolMap visited(M);
     for (int r = 0; r < M; r++) {
         for (int c = 0; c < M; c++) {
-            visited[r][c] = false; // Initialize visited map;
+            visited.set(r,c,false);
         }
     }
-    bool invalidTiles[M][M];
+    BoolMap invalidTiles(M);
     for (int r = 0; r < M; r++) {
         for (int c = 0; c < M; c++) {
-            invalidTiles[r][c] = false; // Initialize visited map;
+            invalidTiles.set(r, c, false);
         }
     }
 
@@ -206,9 +220,9 @@ void part2() {
         r = p.y;
         BFSqueue.pop();
         if ((r >= M) || (r < 0) || (c >= M) || (c < 0)) { continue; }
-        if ((!visited[r][c]) && (!periMap[r][c])) {
-            visited[r][c] = true;
-            invalidTiles[r][c] = true;
+        if ((!visited.get(r,c)) && (!periMap.get(r,c))) {
+            visited.set(r,c,true);
+            invalidTiles.set(r,c,true);
             vector<Point> adj = adjacentPoints(p);
             for (auto iter = adj.begin(); iter != adj.end(); iter++) {
                 BFSqueue.push(*iter);
@@ -219,7 +233,7 @@ void part2() {
     cout << '\n';
     for (int r = 0; r < M; r++) {
         for (int c = 0; c < M; c++) {
-            if (invalidTiles[r][c]) {
+            if (invalidTiles.get(r,c)) {
                 cout <<'X';
             }
             else {
@@ -267,9 +281,7 @@ void part2() {
                     MIN = std::min(curr.y, next.y);
                     MAX = std::max(curr.y, next.y);
                     for (int r = MIN; r <= MAX; r++) {
-                        if (!invalidTiles[r][curr.x]) { 
-                            areas.push_back(calcArea(curr, next));
-                         }
+
                     }
                 }
                 else if (curr.y == next.y) {
@@ -277,9 +289,7 @@ void part2() {
                     MIN = std::min(curr.x, next.x);
                     MAX = std::max(curr.x, next.x);
                     for (int c = MIN; c <= MAX; c++) {
-                        if (!invalidTiles[curr.y][c]) { 
-                            areas.push_back(calcArea(curr, next));
-                         }
+
                     }
                 }
                 else {
