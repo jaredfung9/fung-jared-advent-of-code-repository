@@ -1,3 +1,4 @@
+#include "Machine/Machine.hh"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -5,90 +6,6 @@
 #include <vector>
 #include <queue>
 using std::cout, std::string, std::ifstream, std::stringstream, std::queue, std::vector;
-
-/*  Cleans token for processing.
-    [.##.] -> .##.
-    (1,2) -> 1 2
-    {1,2,3} -> 1 2 3
-*/
-string cleanToken(string token) {
-    string clean = token.substr(1, token.size()-2);
-    for (int i = 0; i < (int) clean.size(); i++) {
-        if (clean[i] == ',') {
-            clean[i] = ' ';
-        }
-    }
-    return clean;
-}
-/* Given a token that represents:
-machine-state: [.###.] -> int initial_state
-button: (0,1,2) -> int bitmask
-joltages" {12} -> -1
-*/
-int processToken(string token) {
-    char c = token[0];
-    string cleanTk = cleanToken(token);
-    int val = 0;
-    switch(c) {
-        case '{':
-            val = -1;  // IE do nothing
-            break;
-        case '[':
-            for (int i = 0; i < (int) cleanTk.size(); i++) {
-                if (cleanTk[i] == '#') {
-                    val += 1 << i;
-                }
-            }
-            break;
-        case '(': 
-            stringstream buttonVals(cleanTk);
-            int x;
-            while (buttonVals >> x) {
-                val += 1 << x;
-            }
-            break;       
-    }
-    return val;
-}
-class Machine {
-    vector<int> buttons;
-    int initial_state;
-    public:
-    Machine() {
-        initial_state=0;
-    }
-    Machine(string line) {
-        stringstream stm(line);
-        string token;
-        char c;
-        while (stm>>token) { 
-            c = token[0];
-            switch(c) {
-                case '[':
-                    initial_state = processToken(token);
-                    break;
-                case '(':
-                    buttons.push_back(processToken(token));
-                    break;
-                case '{':
-                    break;  // Ignore joltages
-            }
-        }
-    }
-    int initialState() {
-        return initial_state;
-    }
-    vector<int> retrieveButtons() {
-        return buttons;
-    }
-    void printState() {
-        printf("MACHINE INIT: %d BUTTONS: ", initial_state);
-        for (int i = 0; i < (int) buttons.size(); i++) {
-            printf("%d ", buttons[i]);
-        }
-        printf("\n");
-    }
-};
 
 /* Represents the state of a Machine after N buttonPresses. */
 struct State {
@@ -99,12 +16,13 @@ struct State {
 void printState(State s) {
     printf("State: %d : Presses: %d\n", s.currentState, s.buttonPresses);
 }
+
 /* Given a MACHINE, returns the minimum number of button presses needed to solve the machine. */
 int solveMachine(Machine machine) {
     // BFS decision tree; try each button press
-    vector<int> buttons = machine.retrieveButtons();
+    vector<int> buttons = machine.getButtons();
     queue<State> buffer;
-    buffer.push(State{machine.initialState(), 0});
+    buffer.push(State{machine.getInitState(), 0});
     State state;
     int currState, currPresses;
     while (!buffer.empty()) {
@@ -123,6 +41,7 @@ int solveMachine(Machine machine) {
     }
     return 0;
 }
+
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         cout << "Please include a file\n";
@@ -141,5 +60,6 @@ int main(int argc, char* argv[]) {
     for (auto iter = machines.begin(); iter != machines.end(); iter++) {
         count += solveMachine(*iter);
     }
-    printf("PART 1: %d\n", count);
+    printf("PART 1: %d\n", count);  // 434
+    return 0;
 }
