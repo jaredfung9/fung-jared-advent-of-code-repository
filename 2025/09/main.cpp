@@ -171,7 +171,7 @@ bool validArea(Point a, Point b, BoolMap* invalid) {
 }
 
 void part2() {
-    string input = "inputs/demo.txt";
+    string input = "inputs/input.txt";
 
     ifstream file;
     file.open(input);
@@ -310,11 +310,12 @@ void part2() {
 }
 int main() {
     part1(); // 4715966250 
-    part2();
+    part2(); // 1530527040
     /* PART 2:
     4678171871 TOO HIGH
     AOC HINTS:
     1. Line Intersections
-    2. Coordinate Compression
+    2. Coordinate Compression (*) <- makes the most sense!
+    1530527040 after refactor!
     */
 }
