@@ -4,11 +4,15 @@
 #include <unordered_map>
 #include <algorithm>
 #include <string>
+#include <set>
 using std::cout, std::ifstream, std::vector, std::abs, std::unordered_map, std::string;
 
 struct Point {
     int64_t x, y;
 };
+bool compPoint(Point a, Point b) {
+    return a.x < b.x;
+}
 bool intMax(int64_t a, int64_t b) {
     return a > b;
 }
@@ -161,7 +165,7 @@ class RangeChecker {
 };
 
 void part2() {
-    string input = "inputs/demo.txt";
+    string input = "inputs/input.txt";
 
     ifstream file;
     file.open(input);
@@ -183,14 +187,34 @@ void part2() {
             if(ranges.validArea(genCorners(p1, p2))) {
                 int64_t area = (abs(p1.x - p2.x)+1) * (abs(p1.y - p2.y)+1);
                 areas.push_back(area);
-                // printf("%ld\n", area);
+                // printf("(%ld,%ld) (%ld,%ld) %ld\n", p1.x, p1.y, p2.x, p2.y, area);
             }
         }
     }
     std::sort(areas.begin(), areas.end(), &intMax);
+    // for (auto iter = areas.begin(); iter != areas.end(); iter++) {
+    //     printf("%ld\n", *iter);
+    // }
     printf("PART 2: %ld\n", areas[0]);
+    std::sort(points.begin(), points.end(), &compPoint);
+    vector<int64_t> xCoords;
+    for (auto iter = points.begin(); iter!= points.end(); iter += 2) {
+        xCoords.push_back(iter->x);
+    }
+    int id = 0;
+    for (auto iter = xCoords.begin(); iter != xCoords.end(); iter++) {
+        printf("%d %ld\n", id , *iter);
+        id++;
+    }
+
 }
 int main() {
     part1(); // 4715966250 
     part2();
+    /* PART 2:
+    4678171871 TOO HIGH
+    AOC HINTS:
+    1. Line Intersections
+    2. Coordinate Compression
+    */
 }
