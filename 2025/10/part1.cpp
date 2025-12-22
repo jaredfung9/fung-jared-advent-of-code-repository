@@ -18,7 +18,7 @@ void printState(State s) {
 
 /* Given a MACHINE, returns the minimum number of button presses needed to solve the machine. */
 int solveMachine(Machine machine) {
-    // BFS decision tree; try each button press
+    // BFS decision tree; try each button press; if state == 0, success.
     vector<int> buttons = machine.getIndicatorButtons();
     queue<State> buffer;
     buffer.push(State{machine.getInitState(), 0});

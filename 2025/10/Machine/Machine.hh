@@ -19,6 +19,8 @@ class Machine {
     Machine() { initial_state = 0; }
     Machine(std::string line);
     int getInitState() { return initial_state; }
+    std::vector<int> getInitJoltageState() { return joltage_state; }
     std::vector<int> getIndicatorButtons() { return indicator_buttons; }
+    std::vector<JoltageButton> getJoltageButtons() { return joltage_buttons; }
     void printState();
 };

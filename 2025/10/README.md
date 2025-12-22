@@ -23,3 +23,12 @@
 
 ## PART 2 OBSERVATIONS
 * Very similar to part 1, except we can no longer use bits, need to track each individual integer?
+* Part 1's solution is infeasible for part 2, each stage will grow the buffer by N
+* Just to solve the first machine, took 4.6mil button presses. Clearly we need to cull some of these branches.
+## BRAINSTORMING
+* Instead of simulating every button press, maybe we need to convert the problem to a system of linear equations.
+* A Python library would work well here
+## RESEARCH
+* This is a linear algebra problem with multiple solutions
+* We want to find the minimum solution
+* Further research: Z3-solver
