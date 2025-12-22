@@ -110,8 +110,13 @@ class CompressedMapping {
     }
     int compressedRow(int originalRow) { return CompressedRows[originalRow]; }
     int compressedCol(int originalCol) { return CompressedCols[originalCol]; }
+    int originalRow(int compRow) { return OriginalRows[compRow]; }
+    int originalCol(int compCol) { return OriginalCols[compCol]; }
     Point compressedPoint(Point p) {
         return Point{compressedCol(p.x), compressedRow(p.y)};
+    }
+    Point originalPoint(Point p) {
+        return Point{originalCol(p.x), originalRow(p.y)};
     }
     int getM() { return m; }
 };
@@ -127,6 +132,43 @@ class BoolMap {
     bool get(int r, int c) { return map[r][c]; }
     void set(int r, int c, bool val) { map[r][c] = val; }
 };
+
+bool validStraight(Point a, Point b, BoolMap* invalid) {
+    int MIN,MAX;
+    if (a.x == b.x) {
+        MIN = std::min(a.y, b.y);
+        MAX = std::max(a.y, b.y);
+        for (int r = MIN; r <= MAX; r++) {
+            if (invalid->get(r,a.x)) { return false; }    
+        }
+    }
+    else if (a.y == b.y) {
+        MIN = std::min(a.x, b.x);
+        MAX = std::max(a.x, b.x);
+        for (int c = MIN; c <= MAX; c++) {
+            if (invalid->get(a.y, c)) { return false; }
+        }
+    }
+    else {
+        printf("ERROR ");
+        return false;
+    }
+    return true;
+}
+
+bool validArea(Point a, Point b, BoolMap* invalid) {
+    vector<Point> corners = genCorners(a,b);
+    Point curr, next;
+
+    for (int i = 0; i < (int) corners.size()-1; i++) {
+        curr = corners[i];
+        next = corners[i+1];
+        if (!validStraight(curr, next, invalid)) { return false; }    
+    }
+    // check final straight
+    if (!validStraight(corners.back(), corners.front(), invalid)) { return false; }
+    return true;
+}
 
 void part2() {
     string input = "inputs/demo.txt";
@@ -164,7 +206,6 @@ void part2() {
             // Traverse by rows
             MIN = std::min(prev.y, curr.y);
             MAX = std::max(prev.y, curr.y);
-            // printf("MOVING VERTICALLY %ld %ld -> %ld %ld FROM %d -> %d\n", prev.x, prev.y, curr.x, curr.y, MIN, MAX);
             for (int ROW = MIN; ROW <= MAX; ROW++) {
                 periMap.set(ROW, prev.x, 1);
             }
@@ -173,16 +214,17 @@ void part2() {
             // Traverse by cols
             MIN = std::min(prev.x, curr.x);
             MAX = std::max(prev.x, curr.x);
-            // printf("MOVING HORIZONTALLY %ld %ld -> %ld %ld FROM %d -> %d\n", prev.x, prev.y, curr.x, curr.y, MIN, MAX);
             for (int COL = MIN; COL <= MAX; COL++) {
                 periMap.set(prev.y, COL, 1);
             }
         }
         else {
             printf("FATAL ERROR: ILLEGAL MOVE %ld %ld -> %ld %ld\n", prev.x, prev.y, curr.x, curr.y);
+            return;
         }
         prev = curr;
     }
+    compressedPoints.pop_back();
 
     // PRINT PERIMETER MAP
     for (int r = 0; r < M; r++) {
@@ -243,6 +285,10 @@ void part2() {
         cout << '\n';
     }
     vector<int64_t> areas;
+    int64_t area;
+    // for (auto iter = compressedPoints.begin(); iter != compressedPoints.end(); iter++) {
+    //     printf("(%ld, %ld)\n", iter->x, iter->y);
+    // }
     // ITERATE THROUGH COMPRESSED POINTS (red tiles) and check all areas between (CompP x ComP)
     for (auto iter1 = compressedPoints.begin(); iter1 != compressedPoints.end(); iter1++) {
         for (auto iter2 = iter1+1; iter2 != compressedPoints.end(); iter2++) {
@@ -250,55 +296,15 @@ void part2() {
             p1 = *iter1;
             p2 = *iter2;
             if ((p1.x == p2.x) && (p1.y == p2.y)) { continue; }
-            printf("%ld %ld -> %ld %ld : ", p1.x, p1.y, p2.x, p2.y);
-            vector<Point> corners = genCorners(p1, p2);
-            // Iterate from corner to corner;
-            Point curr, next;
-            int MIN,MAX;
-            for (int i = 0; i < 3; i++) {
-                curr = corners[i];
-                next = corners[i+1];
-                if (curr.x == next.x) {
-                    MIN = std::min(curr.y, next.y);
-                    MAX = std::max(curr.y, next.y);
-                    printf("VERTICAL ");
-                }
-                else if (curr.y == next.y) {
-                    MIN = std::min(curr.x, next.x);
-                    MAX = std::max(curr.x, next.x);
-                    printf("HORIZONTAL ");
-                }
-                else {
-                    printf("ERROR ");
-                }
+            if (validArea(p1, p2, &invalidTiles)) {
+                area = calcArea(compMap.originalPoint(p1), compMap.originalPoint(p2));
+                // printf("VALID: (%ld, %ld) and (%ld, %ld) %ld\n", p1.x,p1.y,p2.x,p2.y,area);
+                areas.push_back(area);
             }
-            
-            // Walk back to starting corner
-            curr = corners[3];
-            next = corners[0];
-            if (curr.x == next.x) {
-                    printf("VERTICAL ");
-                    MIN = std::min(curr.y, next.y);
-                    MAX = std::max(curr.y, next.y);
-                    for (int r = MIN; r <= MAX; r++) {
-
-                    }
-                }
-                else if (curr.y == next.y) {
-                    printf("HORIZONTAL ");
-                    MIN = std::min(curr.x, next.x);
-                    MAX = std::max(curr.x, next.x);
-                    for (int c = MIN; c <= MAX; c++) {
-
-                    }
-                }
-                else {
-                    printf("ERROR ");
-                }
-            printf("\n");
         }
-        
     }
+    std::sort(areas.begin(), areas.end(), &intMax);
+    printf("PART 2: %ld\n", areas[0]);
 }
 int main() {
     part1(); // 4715966250 
