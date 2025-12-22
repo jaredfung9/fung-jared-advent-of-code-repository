@@ -16,3 +16,7 @@
 * vector[END] = joltages
 * everything else = buttons
 * Then use sed to process each individual file
+* Maybe easier just to not do any preprocessing and treat each as a token.
+* '[' indicates process machine state -> int
+* '(' indicates process button -> bitmask
+* '{' indicates joltage req [IGNORED FOR PART 1; use as the terminator for the machine]
