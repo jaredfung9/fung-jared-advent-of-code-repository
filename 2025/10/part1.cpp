@@ -57,11 +57,23 @@ class Machine {
     Machine() {
         initial_state=0;
     }
-    void setInit(int init) {
-        initial_state = init;
-    }
-    void addButton(int button) {
-        buttons.push_back(button);
+    Machine(string line) {
+        stringstream stm(line);
+        string token;
+        char c;
+        while (stm>>token) { 
+            c = token[0];
+            switch(c) {
+                case '[':
+                    initial_state = processToken(token);
+                    break;
+                case '(':
+                    buttons.push_back(processToken(token));
+                    break;
+                case '{':
+                    break;  // Ignore joltages
+            }
+        }
     }
     int initialState() {
         return initial_state;
@@ -84,27 +96,13 @@ int main(int argc, char* argv[]) {
     }
     ifstream file;
     file.open(argv[1]);
-    string token;
-    char c;
+    string line;
+
     vector<Machine> machines;
-    Machine machine;    // Sentinel Node
-    while (file>>token) { 
-        c = token[0];
-        switch(c) {
-            case '[':
-                machines.push_back(machine);
-                machine = Machine();
-                machine.setInit(processToken(token));
-                break;
-            case '(':
-                machine.addButton(processToken(token));
-                break;
-            case '{':
-                break;
-        }
+    while (std::getline(file, line)) { 
+        machines.push_back(Machine(line));
     }
-    machines.push_back(machine); // Make sure to add the final machine
-    machines.erase(machines.begin()); // Erase the sentinel node
+
     for (auto iter = machines.begin(); iter != machines.end(); iter++) {
         iter->printState();
     }
