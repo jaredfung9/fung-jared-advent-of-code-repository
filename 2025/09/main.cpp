@@ -172,7 +172,7 @@ bool validArea(Point a, Point b, BoolMap* invalid) {
 
 void part2() {
     string input = "inputs/demo.txt";
-    printf("PART 2:\n");
+
     ifstream file;
     file.open(input);
     vector<Point> points;
@@ -226,18 +226,18 @@ void part2() {
     }
     compressedPoints.pop_back();
 
-    // PRINT PERIMETER MAP
-    for (int r = 0; r < M; r++) {
-        for (int c = 0; c < M; c++) {
-            if (periMap.get(r, c)) {
-                cout << '#';
-            }
-            else {
-                cout << '.';
-            }
-        }
-        cout << '\n';
-    }
+    // PRINT Perimeter map
+    // for (int r = 0; r < M; r++) {
+    //     for (int c = 0; c < M; c++) {
+    //         if (periMap.get(r, c)) {
+    //             cout << '#';
+    //         }
+    //         else {
+    //             cout << '.';
+    //         }
+    //     }
+    //     cout << '\n';
+    // }
 
     // BFS
     BoolMap visited(M);
@@ -271,19 +271,21 @@ void part2() {
             }
         }
     }
-    // Printing invalid tiles
-    cout << '\n';
-    for (int r = 0; r < M; r++) {
-        for (int c = 0; c < M; c++) {
-            if (invalidTiles.get(r,c)) {
-                cout <<'X';
-            }
-            else {
-                cout << '.';
-            }
-        }
-        cout << '\n';
-    }
+
+    // PRINT invalid tiles
+    // cout << '\n';
+    // for (int r = 0; r < M; r++) {
+    //     for (int c = 0; c < M; c++) {
+    //         if (invalidTiles.get(r,c)) {
+    //             cout <<'X';
+    //         }
+    //         else {
+    //             cout << '.';
+    //         }
+    //     }
+    //     cout << '\n';
+    // }
+
     vector<int64_t> areas;
     int64_t area;
     // for (auto iter = compressedPoints.begin(); iter != compressedPoints.end(); iter++) {
