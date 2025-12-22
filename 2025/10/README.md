@@ -20,3 +20,6 @@
 * '[' indicates process machine state -> int
 * '(' indicates process button -> bitmask
 * '{' indicates joltage req [IGNORED FOR PART 1; use as the terminator for the machine]
+
+## PART 2 OBSERVATIONS
+* Very similar to part 1, except we can no longer use bits, need to track each individual integer?

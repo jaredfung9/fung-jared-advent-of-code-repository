@@ -61,7 +61,7 @@ Machine::Machine(std::string line) {
                         initial_state = processToken(token);
                         break;
                     case '(':
-                        buttons.push_back(processToken(token));
+                        indicator_buttons.push_back(processToken(token));
                         break;
                     case '{':
                         break;  // Ignore joltages
@@ -71,8 +71,8 @@ Machine::Machine(std::string line) {
 
 void Machine::printState() {
     printf("MACHINE INIT: %d BUTTONS: ", initial_state);
-    for (int i = 0; i < (int) buttons.size(); i++) {
-        printf("%d ", buttons[i]);
+    for (int i = 0; i < (int) indicator_buttons.size(); i++) {
+        printf("%d ", indicator_buttons[i]);
     }
     printf("\n");
 }

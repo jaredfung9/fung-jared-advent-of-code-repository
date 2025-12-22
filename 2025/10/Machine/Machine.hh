@@ -4,12 +4,12 @@
 
 
 class Machine {
-    std::vector<int> buttons;
+    std::vector<int> indicator_buttons;
     int initial_state;
     public:
     Machine() { initial_state = 0; }
     Machine(std::string line);
     int getInitState() { return initial_state; }
-    std::vector<int> getButtons() { return buttons; }
+    std::vector<int> getIndicatorButtons() { return indicator_buttons; }
     void printState();
 };

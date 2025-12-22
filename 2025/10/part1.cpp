@@ -2,10 +2,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <sstream>
 #include <vector>
 #include <queue>
-using std::cout, std::string, std::ifstream, std::stringstream, std::queue, std::vector;
+using std::cout, std::string, std::ifstream, std::queue, std::vector;
 
 /* Represents the state of a Machine after N buttonPresses. */
 struct State {
@@ -20,7 +19,7 @@ void printState(State s) {
 /* Given a MACHINE, returns the minimum number of button presses needed to solve the machine. */
 int solveMachine(Machine machine) {
     // BFS decision tree; try each button press
-    vector<int> buttons = machine.getButtons();
+    vector<int> buttons = machine.getIndicatorButtons();
     queue<State> buffer;
     buffer.push(State{machine.getInitState(), 0});
     State state;
