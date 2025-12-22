@@ -5,7 +5,8 @@
 #include <algorithm>
 #include <string>
 #include <set>
-using std::cout, std::ifstream, std::vector, std::abs, std::unordered_map, std::string;
+#include <queue>
+using std::cout, std::ifstream, std::vector, std::abs, std::unordered_map, std::string, std::queue;
 
 struct Point {
     int64_t x, y;
@@ -20,6 +21,11 @@ bool compPoint(Point a, Point b) {
 bool intMax(int64_t a, int64_t b) {
     return a > b;
 }
+
+int64_t calcArea(Point p1, Point p2) {
+    return (abs(p1.x - p2.x)+1) * (abs(p1.y - p2.y)+1);
+}
+
 void part1() {
     // Part 1:
     ifstream file;
@@ -46,10 +52,20 @@ void part1() {
 
 /* PART 2 */
 vector<Point> genCorners(Point a, Point b) {
-    vector<Point> corners{a, b};
+    vector<Point> corners{a};
     corners.push_back(Point{a.x, b.y});
+    corners.push_back(b);
     corners.push_back(Point{b.x, a.y});
     return corners;
+}
+
+vector<Point> adjacentPoints(Point p) {
+    vector<Point> adj;
+    adj.push_back(Point{p.x+1, p.y});
+    adj.push_back(Point{p.x-1, p.y});
+    adj.push_back(Point{p.x, p.y+1});
+    adj.push_back(Point{p.x, p.y-1});
+    return adj;
 }
 
 class CompressedMapping {
@@ -99,6 +115,7 @@ class CompressedMapping {
     }
     int getM() { return m; }
 };
+
 void part2() {
     string input = "inputs/demo.txt";
     printf("PART 2:\n");
@@ -153,7 +170,7 @@ void part2() {
         prev = curr;
     }
 
-    // PRINT PERIMETER MAP TIME
+    // PRINT PERIMETER MAP
     for (int r = 0; r < M; r++) {
         for (int c = 0; c < M; c++) {
             if (periMap[r][c]) {
@@ -167,6 +184,111 @@ void part2() {
     }
 
     // BFS
+    bool visited[M][M];
+    for (int r = 0; r < M; r++) {
+        for (int c = 0; c < M; c++) {
+            visited[r][c] = false; // Initialize visited map;
+        }
+    }
+    bool invalidTiles[M][M];
+    for (int r = 0; r < M; r++) {
+        for (int c = 0; c < M; c++) {
+            invalidTiles[r][c] = false; // Initialize visited map;
+        }
+    }
+
+    queue<Point> BFSqueue;
+    BFSqueue.push(Point{0,0});
+    int r, c;
+    while (!BFSqueue.empty()) {
+        Point p = BFSqueue.front();
+        c = p.x;
+        r = p.y;
+        BFSqueue.pop();
+        if ((r >= M) || (r < 0) || (c >= M) || (c < 0)) { continue; }
+        if ((!visited[r][c]) && (!periMap[r][c])) {
+            visited[r][c] = true;
+            invalidTiles[r][c] = true;
+            vector<Point> adj = adjacentPoints(p);
+            for (auto iter = adj.begin(); iter != adj.end(); iter++) {
+                BFSqueue.push(*iter);
+            }
+        }
+    }
+    // Printing invalid tiles
+    cout << '\n';
+    for (int r = 0; r < M; r++) {
+        for (int c = 0; c < M; c++) {
+            if (invalidTiles[r][c]) {
+                cout <<'X';
+            }
+            else {
+                cout << '.';
+            }
+        }
+        cout << '\n';
+    }
+    vector<int64_t> areas;
+    // ITERATE THROUGH COMPRESSED POINTS (red tiles) and check all areas between (CompP x ComP)
+    for (auto iter1 = compressedPoints.begin(); iter1 != compressedPoints.end(); iter1++) {
+        for (auto iter2 = iter1+1; iter2 != compressedPoints.end(); iter2++) {
+            Point p1, p2;
+            p1 = *iter1;
+            p2 = *iter2;
+            if ((p1.x == p2.x) && (p1.y == p2.y)) { continue; }
+            printf("%ld %ld -> %ld %ld : ", p1.x, p1.y, p2.x, p2.y);
+            vector<Point> corners = genCorners(p1, p2);
+            // Iterate from corner to corner;
+            Point curr, next;
+            int MIN,MAX;
+            for (int i = 0; i < 3; i++) {
+                curr = corners[i];
+                next = corners[i+1];
+                if (curr.x == next.x) {
+                    MIN = std::min(curr.y, next.y);
+                    MAX = std::max(curr.y, next.y);
+                    printf("VERTICAL ");
+                }
+                else if (curr.y == next.y) {
+                    MIN = std::min(curr.x, next.x);
+                    MAX = std::max(curr.x, next.x);
+                    printf("HORIZONTAL ");
+                }
+                else {
+                    printf("ERROR ");
+                }
+            }
+            
+            // Walk back to starting corner
+            curr = corners[3];
+            next = corners[0];
+            if (curr.x == next.x) {
+                    printf("VERTICAL ");
+                    MIN = std::min(curr.y, next.y);
+                    MAX = std::max(curr.y, next.y);
+                    for (int r = MIN; r <= MAX; r++) {
+                        if (!invalidTiles[r][curr.x]) { 
+                            areas.push_back(calcArea(curr, next));
+                         }
+                    }
+                }
+                else if (curr.y == next.y) {
+                    printf("HORIZONTAL ");
+                    MIN = std::min(curr.x, next.x);
+                    MAX = std::max(curr.x, next.x);
+                    for (int c = MIN; c <= MAX; c++) {
+                        if (!invalidTiles[curr.y][c]) { 
+                            areas.push_back(calcArea(curr, next));
+                         }
+                    }
+                }
+                else {
+                    printf("ERROR ");
+                }
+            printf("\n");
+        }
+        
+    }
 }
 int main() {
     part1(); // 4715966250 
