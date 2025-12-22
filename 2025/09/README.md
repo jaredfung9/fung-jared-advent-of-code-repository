@@ -37,3 +37,51 @@
 ### Area Verification
 1. We are interested in all the rectangles formed by selecting two red tiles (our input). In order to verify that all the area's tiles are red-green, we only need to check that all of a given area's perimeter tiles are valid (All inner tiles are guaranteed to be red-green). Check that each tile is NOT in the INVALID map.
 1. First, we select two tiles to be opposite corners. We can easily find the other two corners at (x1,y2) and (x2, y1). We will verify an area is valid by attempting to walk from each corner to an adjacent one until we arrive at our starting corner.
+
+#### ORIGINAL PART 2 BRAINSTORMS
+/* Brainstorm: It is possible to initialize a 100000x100000 bool map to indicate if a tile is valid. 
+Input list walks us around the perimeter. Maybe we can identify valid ranges for each row and column. 
+Leverage the fact that each line indicates a move (we only move by a column or row) to identify the min and max of each row and column.
+It seems like each row and column has a pair of points.
+consider the following case study:
+
+    ...#X#
+    ...X.X
+    #XX#.X
+    X....X
+    #XXXX#
+
+Points:
+    (0,0)
+    (5,0)
+    (5,4)
+    (3,4)
+    (3,2)
+    (0,2)
+
+Ranges  
+Col         Row
+0 : 0,2     0 : 0,5
+5 : 0,4     4 : 3,5
+3 : 2,4     2 : 0,3
+
+Invalid Area:
+(0,2) (3,4)
+Valid Area:
+(0,2) (5,0)
+
+Corners
+(x1,y1) (x2, y2) -> (x1,y2) (x2,y1)
+[(0,2) (3,4)] (0,4) (3,2) <- calculate other corners
+[(0,2) (5,0)] (0,0) (5,2)
+check if each corner is in range
+
+Is it okay to return validCols | validRows or do we need both Cols and Rows to be valid?
+A valid area will pass at least one range check.
+An invalid area is unable to pass any test because it neither has a valid row or col.
+*/
+
+/* Contains a set of valid row and col ranges.
+Can be used to check if a corner is in range. */
+// class Ranges {
+// };
