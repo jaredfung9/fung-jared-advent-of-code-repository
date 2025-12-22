@@ -13,10 +13,10 @@
 1. The vectors form a map from (COMPRESSED, ORIGINAL) by accessing each indice.
 1. The hashmap forms a map from (ORIGINAL, COMPRESSED).
 ### PROOFS
-1. Onto: We iterated through the entire inputs and only removed duplicates.
-1. One-to-One: We removed duplicates, so all that remains in our sorted point list are unique values. Each value is assigned a unique odd number. All even indices are buffers representing all the empty space. (Edge case: if there is no empty space in the original, we have a phantom empty space. We may have to verify empty space before inserting a buffer indice.)
-* The 0th row/col and ith row/col are guaranteed to be empty spaces.
-* Therefore, we have formed a bijection between (ORIGINAL, COMPRESSED).
+1. Onto: We iterated through the entire input and only removed duplicates. For every possible red-tile coordinate, we have a compressed coordinate.
+1. One-to-One: We removed duplicates, so all that remains in our sorted point list are unique values. Each value is assigned a unique odd number using an incrementing int. All even indices are buffers representing all the empty space. (Edge case: if there is no empty space in the original, we have a phantom empty space. We may have to verify empty space before inserting a buffer indice.) Let n := an original point in our list. Since we sorted our list (either by row or col), if ni < ni+1, then ci = i and ci+1 = i + 2. Since ci < ci+1, it must be that each ni has a unique mapping.
+* The 0th row/col and ith row/col are guaranteed to be empty spaces since we specifically added them to our compressed range.
+* Since this mapping is a bijection, we can converted between (ORIGINAL <-> COMPRESSED)
 
 ## Algorithms
 ### Input Processing
@@ -35,8 +35,8 @@
 1. Initialize an buffer MxM array starting from (0,0) run BFS and mark tiles if they are not marked in our original array (IE, mark non-perimeter tiles). Since (0,0) is guaranteed to be outside our created perimeter, running BFS will return a map indicating all INVALID tiles.
 * MxM INVALID_map
 ### Area Verification
-1. We are interested in all the rectangles formed by selecting two red tiles (our input). In order to verify that all the area's tiles are red-green, we only need to check that all of a given area's perimeter tiles are valid (All inner tiles are guaranteed to be red-green). Check that each tile is NOT in the INVALID map.
-1. First, we select two tiles to be opposite corners. We can easily find the other two corners at (x1,y2) and (x2, y1). We will verify an area is valid by attempting to walk from each corner to an adjacent one until we arrive at our starting corner.
+1. We are interested in all the rectangles formed by selecting two red tiles (our input). In order to verify that all the area's tiles are red-green, we only need to check that all of a given area's perimeter tiles are valid (All inner tiles are guaranteed to be red-green since there can be no holes in our red-green tile area due to it being constructed by connecting lines and filling in the middle). While walking from one corner to an adjacent one, check that each tile is NOT in the INVALID map.
+1. From the problem statement, we select two tiles from our input (red tiles) to be opposite corners. We can easily find the other two corners at (x1,y2) and (x2, y1). 
 
 #### ORIGINAL PART 2 BRAINSTORMS
 /* Brainstorm: It is possible to initialize a 100000x100000 bool map to indicate if a tile is valid. 
