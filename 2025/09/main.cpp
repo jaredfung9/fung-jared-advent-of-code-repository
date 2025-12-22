@@ -216,7 +216,7 @@ class CompressedMapping {
     int getM() { return m; }
 };
 void part2() {
-    string input = "inputs/input.txt";
+    string input = "inputs/demo.txt";
     printf("PART 2:\n");
     ifstream file;
     file.open(input);
@@ -226,11 +226,61 @@ void part2() {
         points.push_back(Point{_x, _y});
     }
     file.close();
-    CompressedMapping compMap = CompressedMapping(input);
-    // std::sort(points.begin(), points.end(), &sortByCol);
-    // for (auto iter = points.begin(); iter != points.end(); iter++) {
-    //     printf("%d %d\n", (int) iter->x, compMap.compressedCol(iter->x));
-    // }
+    
+    CompressedMapping compMap = CompressedMapping(input);  
+    vector<Point> compressedPoints;
+    for (auto iter = points.begin(); iter != points.end(); iter++) {
+        compressedPoints.push_back(compMap.compressedPoint(*iter));
+    }
+    int M = compMap.getM();
+    bool periMap[M][M]; // Initialize perimeter map; Row Major (x,y) = [y][x]
+    for (int r = 0; r < M; r++) {
+        for (int c = 0; c < M; c++) {
+            periMap[r][c] = 0;
+        }
+    }
+    compressedPoints.push_back(compressedPoints[0]);
+    Point prev = compressedPoints[0];
+    Point curr;
+    int MIN, MAX;
+    for (int i = 1; i < (int) compressedPoints.size(); i++) {
+        curr = compressedPoints[i];
+        if (prev.x == curr.x) {
+            // Traverse by rows
+            MIN = std::min(prev.y, curr.y);
+            MAX = std::max(prev.y, curr.y);
+            // printf("MOVING VERTICALLY %ld %ld -> %ld %ld FROM %d -> %d\n", prev.x, prev.y, curr.x, curr.y, MIN, MAX);
+            for (int ROW = MIN; ROW <= MAX; ROW++) {
+                periMap[ROW][prev.x] = 1;
+            }
+        }
+        else if (prev.y == curr.y) {
+            // Traverse by cols
+            MIN = std::min(prev.x, curr.x);
+            MAX = std::max(prev.x, curr.x);
+            // printf("MOVING HORIZONTALLY %ld %ld -> %ld %ld FROM %d -> %d\n", prev.x, prev.y, curr.x, curr.y, MIN, MAX);
+            for (int COL = MIN; COL <= MAX; COL++) {
+                periMap[prev.y][COL] = 1;
+            }
+        }
+        else {
+            printf("FATAL ERROR: ILLEGAL MOVE %ld %ld -> %ld %ld\n", prev.x, prev.y, curr.x, curr.y);
+        }
+        prev = curr;
+    }
+
+    // PRINT MAP TIME
+    for (int r = 0; r < M; r++) {
+        for (int c = 0; c < M; c++) {
+            if (periMap[r][c]) {
+                cout << '#';
+            }
+            else {
+                cout << '.';
+            }
+        }
+        cout << '\n';
+    }
 }
 int main() {
     part1(); // 4715966250 
