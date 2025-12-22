@@ -62,17 +62,49 @@ Machine::Machine(std::string line) {
                         break;
                     case '(':
                         indicator_buttons.push_back(processToken(token));
+                        joltage_buttons.push_back(JoltageButton(token));
                         break;
                     case '{':
-                        break;  // Ignore joltages
+                        stringstream joltStream(cleanToken(token));
+                        int x;
+                        while (joltStream >> x) {
+                            joltage_state.push_back(x);
+                        }
+                        break; 
                 }
             }
 }
 
 void Machine::printState() {
-    printf("MACHINE INIT: %d BUTTONS: ", initial_state);
+    printf("MACHINE INDICATOR INIT: %d\nBUTTONS: ", initial_state);
     for (int i = 0; i < (int) indicator_buttons.size(); i++) {
         printf("%d ", indicator_buttons[i]);
+    }
+    printf("\n");
+    printf("JOLTAGE STATE: ");
+    for (int i = 0; i < (int) joltage_state.size(); i++) {
+        printf("%d ", joltage_state[i]);
+    }
+    printf("\n");
+    for (int i = 0; i < (int) joltage_buttons.size(); i++) {
+        joltage_buttons[i].printButton();
+    }
+    printf("\n");
+}
+
+JoltageButton::JoltageButton(string line) {
+    string token = cleanToken(line);
+    stringstream strm(token);
+    int x;
+    while (strm >> x) {
+        targetJoltages.push_back(x);
+    }
+}
+
+void JoltageButton::printButton() {
+    printf("JOLTAGE BUTTON: ");
+    for (int i = 0; i < (int) targetJoltages.size(); i++) {
+        printf("%d ", targetJoltages[i]);
     }
     printf("\n");
 }
