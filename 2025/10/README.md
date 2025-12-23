@@ -35,3 +35,27 @@
 * Linear Programming
 * Simplex Algorithms
 * LPP solvers
+
+# WRITE-UP ON PART 2
+Part 2 really stumped me and it sounds like the go-to option for this style of problem was Linear Programming, specifically Integer Linear Programming.
+## Observations
+* The first thing I noticed was that attempting to simulate each button press quickly ran out of control for even the simplest inputs.
+* The second thing I noticed was that the problem was very similar to a system of linear equations.
+* We can express the target joltages as a single vector J, where j_k represents the target voltage of each terminal.
+* For example, {3,5,4,7} has 4 terminals, with j_0 needing to hit 3, j_1 needing to hit 5, and so on.
+* The other thing I noticed was that the order of button presses didn't matter. This meant that pressing button 0, then button 1, then button 0 again could be expressed as a vector B [2,1] where b_k represented the number of times a given button was pressed.
+* Using this, we could build an NxM coefficient matrix, where N := # of terminals and M := # of buttons. For each tile, (row, col), is 1 iff the terminal represented by row is incremented when the button represented by col is pressed. For the demo input we would end up with a coefficient matrix of 4x6 looking something like this:
+    0 0 0 0 1 1
+    0 1 0 0 0 1
+    0 0 1 1 1 0
+    1 1 0 1 0 0
+* We can quickly notice that solving this with Gaussian elimination that we are left with free variables.
+* Another solution I saw used GE to identify additional constraints and the free variables, then brute forced the free variables until they reached a solution.
+## Constraints
+1. We have N equations representing the final joltage each terminal needs to be at.
+1. All M buttons (inputs) must be non-negative integers.
+1. We want to minimize the sum of all inputs.
+
+## Z3-Solver
+* https://github.com/Z3Prover/z3
+* https://z3prover.github.io/papers/programmingz3.html

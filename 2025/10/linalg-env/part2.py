@@ -10,30 +10,30 @@ def solve_buttons(target, buttons):
         for i in btn:
             B[i][j] += 1
     # Z3 integer variables: x_j = number of presses of button j
-    x = [Int(f"x_{j}") for j in range(m)]
-    opt = Optimize()
+    x = [Int(f"x_{j}") for j in range(m)]                           # Can combine list comprehension with text-variable
+    opt = Optimize()                                                # Z3 optimize-solver
     # Variables must be nonnegative integers
     for j in range(m):
-        opt.add(x[j] >= 0)
+        opt.add(x[j] >= 0)                                          # Adding constraints
     # Constraints: B * x = target
     for i in range(n):
-        opt.add(sum(B[i][j] * x[j] for j in range(m)) == target[i])
+        opt.add(sum(B[i][j] * x[j] for j in range(m)) == target[i]) # Adding constraints: Basically iterating through each terminal's formula and adding the corresponding variable
     # Objective: minimize total presses
-    opt.minimize(sum(x))
-    if opt.check() != sat:
+    opt.minimize(sum(x))                                            # Want to minimize the sum of our button presses
+    if opt.check() != sat:                                          # Optimize.check() (or model.check()) returns whether or not the set of constraints is satisfable.
         print("No solution")
         return None
-    mod = opt.model()
-    solution = [mod[x[j]].as_long() for j in range(m)]
+    mod = opt.model()                                               # If the current Solver is satisifable, Optimize.model() returns the current inputs which satisfies the model's constraints.
+    solution = [mod[x[j]].as_long() for j in range(m)]              # Extracting each button presses into a list to return
     return solution
 
 def part2():
     res = 0
     with open("input2.txt") as f:
         for line in f:
-            segs = line.split()
-            buttons = [eval(f'[{b.strip("()")}]') for b in segs[1:-1]]
-            target = eval(f'[{segs[-1].strip("{}")}]')
+            tokens = line.split()
+            buttons = [eval(f'[{b.strip("()")}]') for b in tokens[1:-1]]
+            target = eval(f'[{tokens[-1].strip("{}")}]')
             res += sum(solve_buttons(target, buttons))
     print(res)
 
