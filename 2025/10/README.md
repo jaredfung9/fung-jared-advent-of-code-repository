@@ -32,3 +32,6 @@
 * This is a linear algebra problem with multiple solutions
 * We want to find the minimum solution
 * Further research: Z3-solver
+* Linear Programming
+* Simplex Algorithms
+* LPP solvers
